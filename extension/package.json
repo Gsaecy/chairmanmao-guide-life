@@ -1,0 +1,99 @@
+{
+  "name": "ChairmanMao-guide-life",
+  "displayName": "Mao's Thought Guidance",
+  "description": "AI guidance powered by Mao's Selected Works - analyze problems with pragmatic, clear-headed methodology",
+  "version": "0.2.1",
+  "publisher": "honor-world",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gsaecy/ChairmanMao-guide-life"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["mao", "guidance", "ai", "decision"],
+  "activationEvents": ["onView:maoxuan.chatPanel"],
+  "icon": "media/icon.png",
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "maoxuan-sidebar", "title": "Mao's Thought", "icon": "media/icon.png" }
+      ]
+    },
+    "views": {
+      "maoxuan-sidebar": [
+        { "type": "webview", "id": "maoxuan.chatPanel", "name": "Chat" }
+      ]
+    },
+    "commands": [
+      { "command": "maoxuan-guidance.openSettings", "title": "Open Settings", "icon": "$(gear)" },
+      { "command": "maoxuan-guidance.newSession", "title": "New Session", "icon": "$(add)" },
+      { "command": "maoxuan-guidance.openChatEditor", "title": "Open Chat in Editor Tab", "icon": "$(go-to-file)" },
+      { "command": "maoxuan-guidance.exportReport", "title": "Export Report", "icon": "$(export)" },
+      { "command": "maoxuan-guidance.openChat", "title": "Open Chat", "icon": "$(comment-discussion)" },
+      { "command": "maoxuan-guidance.openHistory", "title": "Open History", "icon": "$(history)" },
+      { "command": "maoxuan-guidance.loadSession", "title": "Load Session", "icon": "$(folder)" },
+      { "command": "maoxuan-guidance.clearHistory", "title": "Clear History", "icon": "$(trash)" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "maoxuan-guidance.newSession", "when": "view == maoxuan.chatPanel", "group": "navigation" },
+        { "command": "maoxuan-guidance.exportReport", "when": "view == maoxuan.chatPanel", "group": "navigation" },
+        { "command": "maoxuan-guidance.openChatEditor", "when": "view == maoxuan.chatPanel", "group": "navigation" },
+        { "command": "maoxuan-guidance.openSettings", "when": "view == maoxuan.chatPanel", "group": "navigation" }
+      ]
+    },
+    "configuration": {
+      "title": "Mao's Thought Guidance",
+      "properties": {
+        "maoxuan.apiKey": { "type": "string", "default": "", "description": "API Key (DeepSeek or OpenAI-compatible)" },
+        "maoxuan.apiBaseUrl": { "type": "string", "default": "https://api.deepseek.com", "description": "API Base URL" },
+        "maoxuan.model": { "type": "string", "default": "deepseek-chat", "description": "Model name" },
+        "maoxuan.storagePath": { "type": "string", "default": "", "description": "Storage path" },
+        "maoxuan.webSearchEnabled": { "type": "boolean", "default": true, "description": "Enable web search" },
+        "maoxuan.searchApiKey": { "type": "string", "default": "", "description": "Search API Key" },
+        "maoxuan.searchEngine": { "type": "string", "default": "serpapi", "enum": ["serpapi","bing","anysearch"], "enumDescriptions": ["SerpAPI","Bing","AnySearch"], "description": "Search engine" },
+        "maoxuan.temperature": { "type": "number", "default": 0.7, "minimum": 0, "maximum": 2, "description": "Temperature (0-2)" },
+        "maoxuan.maxTokens": { "type": "number", "default": 4096, "minimum": 256, "maximum": 32768, "description": "Max tokens" },
+        "maoxuan.style": { "type": "string", "default": "balanced", "enum": ["maoxuan","yedinying","balanced"], "enumDescriptions": ["Mao Thought","Ye/Ding method","Balanced"], "description": "Style" }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
+    "compile": "webpack --mode development",
+    "lint": "eslint src --ext ts,tsx",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@types/vscode": "^1.85.0",
+    "autoprefixer": "^10.4.17",
+    "css-loader": "^6.9.1",
+    "mini-css-extract-plugin": "^2.10.2",
+    "postcss": "^8.4.33",
+    "postcss-loader": "^8.1.0",
+    "style-loader": "^3.3.4",
+    "tailwindcss": "^3.4.1",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "vsce": "^2.15.0",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "dompurify": "^3.0.8",
+    "jspdf": "^2.5.1",
+    "marked": "^11.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "undici": "^5.28.4"
+  }
+}
