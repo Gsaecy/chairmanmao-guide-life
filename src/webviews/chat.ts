@@ -92,10 +92,10 @@ import './globals.css';
               rows="3"
               placeholder="同志，请说说你面临的具体情况..."
             ></textarea>
-            <button id="btnSend" class="flex-shrink-0 px-4 py-2 rounded text-sm font-medium transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">
+            <button id="btnSend" class="flex-shrink-0 px-5 py-2.5 rounded text-sm font-semibold transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground); box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
               发送
             </button>
-            <button id="btnAbort" class="hidden flex-shrink-0 px-3 py-2 rounded text-xs transition-colors" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);" title="停止">停止</button>
+            <button id="btnAbort" class="hidden flex-shrink-0 px-4 py-2.5 rounded text-xs font-medium transition-colors" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);" title="停止">停止</button>
           </div>
           <p class="text-[10px] mt-1 opacity-40" style="padding-left: max(0px, calc((100% - 680px) / 2)); color: var(--vscode-descriptionForeground);">Enter 发送 · Shift+Enter 换行</p>
         </div>
@@ -437,19 +437,22 @@ import './globals.css';
 
   function showNewSessionDialog() {
     const overlay = document.createElement('div');
-    overlay.className = 'fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50';
+    overlay.className = 'fixed inset-0 flex items-center justify-center z-50';
+    overlay.style.cssText = 'background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);';
     overlay.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-apple-lg w-[400px] p-6 animate-in fade-in zoom-in">
-        <h3 class="text-base font-semibold text-gray-900 mb-4">新建对话</h3>
-        <label class="block text-sm text-gray-600 mb-1">对话标题</label>
-        <input id="newTitleInput" type="text" class="w-full border border-gray-200 rounded-apple px-3 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 mb-4" placeholder="输入对话标题..." />
+      <div class="rounded-xl w-[380px] p-6 shadow-lg" style="background: var(--vscode-editorWidget-background); border: 1px solid var(--vscode-editorWidget-border);">
+        <h3 class="text-base font-semibold mb-4" style="color: var(--vscode-editor-foreground);">新建对话</h3>
+        <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">对话标题</label>
+        <input id="newTitleInput" type="text" class="w-full border rounded px-3 py-2 text-sm focus:outline-none mb-4" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border);" placeholder="输入对话标题..." />
         <div class="flex justify-end gap-2">
-          <button id="cancelNewSession" class="px-4 py-2 text-sm text-gray-500 hover:bg-gray-100 rounded-apple transition-colors">取消</button>
-          <button id="confirmNewSession" class="px-4 py-2 text-sm bg-brand-600 text-white hover:bg-brand-700 rounded-apple font-medium transition-colors">开始对话</button>
+          <button id="cancelNewSession" class="px-4 py-2 text-sm rounded transition-colors" style="background: transparent; color: var(--vscode-descriptionForeground);">取消</button>
+          <button id="confirmNewSession" class="px-4 py-2 text-sm rounded font-medium transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">开始对话</button>
         </div>
       </div>
     `;
     document.body.appendChild(overlay);
+    // 点击遮罩关闭
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 
     const input = overlay.querySelector('#newTitleInput') as HTMLInputElement;
     input.focus();
@@ -459,20 +462,24 @@ import './globals.css';
       const title = input.value.trim();
       if (title) {
         sessionLoaded = false;
+        // 更新标题
+        const phaseLabel = getEl('phaseLabel');
+        if (phaseLabel) phaseLabel.textContent = title.length > 20 ? title.substring(0, 20) + '…' : title;
+        // 重置消息区
         const container = getEl('messagesContainer')!;
         container.innerHTML = `
-          <div id="placeholderMsg" class="text-center py-20">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white shadow-apple mb-4">
-              <span class="text-2xl">★</span>
+          <div id="placeholderMsg" class="text-center py-14">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-3" style="background: var(--vscode-sideBar-background);">
+              <span class="text-xl">★</span>
             </div>
-            <p class="text-base font-semibold text-gray-800 mb-1">没有调查，就没有发言权</p>
-            <p class="text-sm text-gray-400 max-w-xs mx-auto">告诉我你面临的问题，让我们一起用实事求是的方法来分析</p>
+            <p class="text-sm font-semibold mb-1" style="color: var(--vscode-editor-foreground);">${escapeHtml(title)}</p>
+            <p class="text-xs" style="color: var(--vscode-descriptionForeground);">请描述你面临的具体情况，让我们一起分析</p>
           </div>
           <div id="loadingIndicator" class="hidden flex justify-start">
-            <div class="bg-white border border-gray-200 rounded-apple px-4 py-3 text-sm text-gray-500 shadow-sm">
-              <span class="inline-flex items-center gap-2">
-                <span class="w-2 h-2 bg-brand-500 rounded-full animate-pulse"></span>
-                正在思考...
+            <div class="border px-3 py-2 text-xs rounded" style="background: var(--vscode-sideBar-background); border-color: var(--vscode-sideBar-border); color: var(--vscode-descriptionForeground);">
+              <span class="inline-flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: var(--vscode-button-background);"></span>
+                思考中...
               </span>
             </div>
           </div>
@@ -480,27 +487,40 @@ import './globals.css';
         updatePhase('understanding', '第一阶段 · 全面了解');
         vscode.postMessage({ command: 'createSession', payload: { title } });
         overlay.remove();
+        // 自动聚焦输入框
+        setTimeout(() => {
+          const inputBox = getEl('inputBox') as HTMLTextAreaElement;
+          if (inputBox && !isSidebar) inputBox.focus();
+        }, 100);
+      }
+    });
+    // Enter 提交
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        (overlay.querySelector('#confirmNewSession') as HTMLButtonElement)?.click();
       }
     });
   }
 
   function showReportDialog(report: string) {
     const overlay = document.createElement('div');
-    overlay.className = 'fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50';
+    overlay.className = 'fixed inset-0 flex items-center justify-center z-50';
+    overlay.style.cssText = 'background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);';
     overlay.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-apple-lg w-[85%] max-h-[80%] flex flex-col">
-        <div class="px-5 py-3 border-b border-gray-200 flex justify-between items-center rounded-t-2xl">
-          <span class="font-semibold text-gray-900">对话总结报告</span>
-          <button class="text-gray-400 hover:text-gray-600 text-xl leading-none transition-colors" id="closeReport">×</button>
+      <div class="rounded-xl w-[90%] max-w-[600px] max-h-[80%] flex flex-col shadow-lg" style="background: var(--vscode-editorWidget-background); border: 1px solid var(--vscode-editorWidget-border);">
+        <div class="px-5 py-3 border-b flex justify-between items-center" style="border-color: var(--vscode-editorWidget-border);">
+          <span class="font-semibold text-sm" style="color: var(--vscode-editor-foreground);">对话总结报告</span>
+          <button class="text-xl leading-none transition-colors" style="color: var(--vscode-descriptionForeground);" id="closeReport">&times;</button>
         </div>
-        <div class="p-5 overflow-y-auto flex-1 text-sm whitespace-pre-wrap leading-relaxed" style="max-height:55vh;">${formatContent(report)}</div>
-        <div class="p-4 border-t border-gray-100 flex justify-end gap-2">
-          <button id="copyReport" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-apple text-sm font-medium transition-colors">复制</button>
-          <button id="dismissReport" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-2 rounded-apple text-sm transition-colors">关闭</button>
+        <div class="p-5 overflow-y-auto flex-1 text-sm whitespace-pre-wrap leading-relaxed" style="max-height:55vh; color: var(--vscode-editor-foreground);">${formatContent(report)}</div>
+        <div class="p-4 border-t flex justify-end gap-2" style="border-color: var(--vscode-editorWidget-border);">
+          <button id="copyReport" class="px-4 py-2 rounded text-sm font-medium transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">复制</button>
+          <button id="dismissReport" class="px-4 py-2 rounded text-sm transition-colors" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);">关闭</button>
         </div>
       </div>
     `;
     document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     
     document.getElementById('closeReport')?.addEventListener('click', () => overlay.remove());
     document.getElementById('dismissReport')?.addEventListener('click', () => overlay.remove());
@@ -516,7 +536,7 @@ import './globals.css';
     
     const errorDiv = document.createElement('div');
     errorDiv.className = 'flex justify-center';
-    errorDiv.innerHTML = `<div class="bg-red-50 border border-red-200 text-red-700 rounded-apple px-4 py-2.5 text-sm">⚠ ${message}</div>`;
+    errorDiv.innerHTML = `<div class="border rounded px-4 py-2.5 text-sm" style="background: var(--vscode-inputValidation-errorBackground); color: var(--vscode-inputValidation-errorForeground); border-color: var(--vscode-inputValidation-errorBorder);">${message}</div>`;
     container.appendChild(errorDiv);
     container.scrollTop = container.scrollHeight;
   }
@@ -546,5 +566,11 @@ import './globals.css';
 
   function promptNewSession() {
     showNewSessionDialog();
+  }
+
+  function escapeHtml(str: string): string {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
   }
 })();
