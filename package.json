@@ -1,0 +1,201 @@
+{
+  "name": "ChairmanMao-guide-life",
+  "displayName": "毛选思想指导",
+  "description": "以毛泽东选集核心思想指导判断和行动的智慧对话扩展",
+  "version": "0.1.0",
+  "publisher": "Gsaecy",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "毛选",
+    "毛泽东",
+    "思想指导",
+    "决策"
+  ],
+  "activationEvents": [
+    "onView:maoxuan.chatPanel"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "maoxuan-sidebar",
+          "title": "毛选思想指导",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "maoxuan-sidebar": [
+        {
+          "type": "webview",
+          "id": "maoxuan.chatPanel",
+          "name": "对话"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "maoxuan-guidance.openSettings",
+        "title": "打开毛选思想指导设置",
+        "icon": "$(gear)"
+      },
+      {
+        "command": "maoxuan-guidance.newSession",
+        "title": "新建会话",
+        "icon": "$(add)"
+      },
+      {
+        "command": "maoxuan-guidance.openChatEditor",
+        "title": "在编辑器标签页中打开对话",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "maoxuan-guidance.exportReport",
+        "title": "导出分析报告",
+        "icon": "$(export)"
+      },
+      {
+        "command": "maoxuan-guidance.openChat",
+        "title": "打开对话",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "maoxuan-guidance.openHistory",
+        "title": "打开历史记录",
+        "icon": "$(history)"
+      },
+      {
+        "command": "maoxuan-guidance.clearHistory",
+        "title": "清理历史记录",
+        "icon": "$(trash)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "maoxuan-guidance.newSession",
+          "when": "view == maoxuan.chatPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "maoxuan-guidance.exportReport",
+          "when": "view == maoxuan.chatPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "maoxuan-guidance.openChatEditor",
+          "when": "view == maoxuan.chatPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "maoxuan-guidance.openSettings",
+          "when": "view == maoxuan.chatPanel",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "毛选思想指导",
+      "properties": {
+        "maoxuan.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key (DeepSeek 或其他 OpenAI 兼容 API)"
+        },
+        "maoxuan.apiBaseUrl": {
+          "type": "string",
+          "default": "https://api.deepseek.com",
+          "description": "API Base URL"
+        },
+        "maoxuan.model": {
+          "type": "string",
+          "default": "deepseek-chat",
+          "description": "使用的模型名称"
+        },
+        "maoxuan.storagePath": {
+          "type": "string",
+          "default": "",
+          "description": "对话存储路径（留空使用默认 ~/.maoxuan-guidance）"
+        },
+        "maoxuan.webSearchEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "启用联网搜索功能（需配置搜索引擎 API）"
+        },
+        "maoxuan.searchApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "搜索引擎 API Key (SerpAPI / Bing)"
+        },
+        "maoxuan.searchEngine": {
+          "type": "string",
+          "default": "serpapi",
+          "enum": ["serpapi", "bing"],
+          "description": "搜索引擎选择"
+        },
+        "maoxuan.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 2,
+          "description": "模型温度参数 (0-2)"
+        },
+        "maoxuan.maxTokens": {
+          "type": "number",
+          "default": 4096,
+          "minimum": 256,
+          "maximum": 32768,
+          "description": "最大输出 Token 数"
+        },
+        "maoxuan.style": {
+          "type": "string",
+          "default": "balanced",
+          "enum": ["maoxuan", "yedinying", "balanced"],
+          "enumDescriptions": [
+            "偏重毛选原教旨主义风格",
+            "偏重叶子农/丁元英方法论风格",
+            "平衡融合"
+          ],
+          "description": "对话风格偏好"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
+    "compile": "webpack --mode development",
+    "lint": "eslint src --ext ts,tsx",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@types/vscode": "^1.85.0",
+    "autoprefixer": "^10.4.17",
+    "css-loader": "^6.9.1",
+    "postcss": "^8.4.33",
+    "postcss-loader": "^8.1.0",
+    "style-loader": "^3.3.4",
+    "tailwindcss": "^3.4.1",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "jspdf": "^2.5.1",
+    "dompurify": "^3.0.8",
+    "marked": "^11.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
