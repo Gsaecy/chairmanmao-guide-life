@@ -4,14 +4,20 @@
 
 | VS Code | Version | License |
 |---------|---------|--------|
-| >=1.85.0 | 0.2.0 | MIT |
+| >=1.85.0 | 0.2.1 | MIT |
 
 ---
 
-## What's New in v0.2.0
+## What's New in v0.2.1
 
+- 🖼️ **Fixed Icon Display** - Added `img-src vscode-resource:` to CSP policies for ChatPanel, ChatViewProvider, and HistoryPanel
+- 📐 **Sidebar Layout Refined** - Usage instructions moved to bottom fixed area (`flex-shrink-0`)
+- 🔗 **History View Chat Fix** - Added `maoxuan-guidance.loadSession` command; clicking "View Chat" in history now correctly loads sessions
+- 📦 **Dev Packaging** - Updated webpack configs, package scripts, and VSIX build pipeline
+
+### Previous v0.2.0
 - ✨ **Redesigned Sidebar Navigation** - Clean status display (extension name + style mode + API readiness) with three action buttons (New Chat / History / Settings), welcome icon, and step-by-step usage guide
-- 🎨 **Full Theme Adaptation** - History & Settings panels now use VSCode CSS variables; no more hardcoded red/white colors; all input fields have subtle shadows `0 1px 3px rgba()`
+- 🎨 **Full Theme Adaptation** - History & Settings panels now use VSCode CSS variables; no more hardcoded red/white colors; all input fields have subtle shadows
 - ⚡ **Independent Chat Panel** - New sessions open directly in editor panel; no more sidebar UI flickering or lost session titles
 - 🔧 **Streaming Performance** - 100ms RAF debounce prevents character-by-character rendering, giving smooth text flow
 - 📋 **Improved History Panel** - Enhanced color contrast, card hover shadows, Delete button with confirmation dialog
@@ -85,7 +91,7 @@ Mao's Thought Guidance is a VS Code extension that uses Mao's Selected Works cor
 
 ### 1. Install
 ```bash
-code --install-extension ChairmanMao-guide-life-0.2.0.vsix
+code --install-extension ChairmanMao-guide-life-0.2.1.vsix
 ```
 
 ### 2. Configure API
@@ -119,7 +125,7 @@ code --install-extension ChairmanMao-guide-life-0.2.0.vsix
 ## Development
 
 ```bash
-git clone https://github.com/Gsaecy/ChairmanMao-guide-life.git
+git clone https://github.com/Gsaecy/chairmanmao-guide-life.git
 cd extension
 npm install
 npm run compile
@@ -130,7 +136,7 @@ npm run package
 
 ## Support
 
-- 📖 [GitHub Issues](https://github.com/Gsaecy/ChairmanMao-guide-life/issues)
+- 📖 [GitHub Issues](https://github.com/Gsaecy/chairmanmao-guide-life/issues)
 - 💬 Feedback welcomed
 
 ---
@@ -142,6 +148,12 @@ MIT
 ---
 
 ## Changelog
+
+### v0.2.1
+- Fixed icon display: added `img-src` CSP policies
+- Sidebar usage guide moved to bottom fixed area
+- History "View Chat" button now loads sessions via new `loadSession` command
+- Updated GitHub repo URL to lowercase
 
 ### v0.1.9
 - Style binding: select style (Mao/Ye/Balanced) when creating session, persists per session
