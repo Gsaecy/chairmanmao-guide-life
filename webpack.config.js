@@ -1,4 +1,5 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /** @type {import('webpack').Configuration} */
 const extensionConfig = {
@@ -40,6 +41,7 @@ const chatWebviewConfig = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'chat.js',
   },
+  plugins: [new MiniCssExtractPlugin({ filename: 'chat.css' })],
   resolve: {
     extensions: ['.ts', '.js'],
   },
@@ -52,7 +54,7 @@ const chatWebviewConfig = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
     ],
   },
@@ -68,6 +70,7 @@ const settingsWebviewConfig = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'settings.js',
   },
+  plugins: [new MiniCssExtractPlugin({ filename: 'settings.css' })],
   resolve: {
     extensions: ['.ts', '.js'],
   },
@@ -80,7 +83,7 @@ const settingsWebviewConfig = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
     ],
   },
@@ -96,6 +99,7 @@ const historyWebviewConfig = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'history.js',
   },
+  plugins: [new MiniCssExtractPlugin({ filename: 'history.css' })],
   resolve: {
     extensions: ['.ts', '.js'],
   },
@@ -108,7 +112,7 @@ const historyWebviewConfig = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
     ],
   },

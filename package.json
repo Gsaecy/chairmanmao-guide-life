@@ -194,6 +194,7 @@
     "@types/vscode": "^1.85.0",
     "autoprefixer": "^10.4.17",
     "css-loader": "^6.9.1",
+    "mini-css-extract-plugin": "^2.10.2",
     "postcss": "^8.4.33",
     "postcss-loader": "^8.1.0",
     "style-loader": "^3.3.4",
