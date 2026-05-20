@@ -4,7 +4,7 @@
 
 | VS Code | Version | License |
 |---------|---------|--------|
-| >=1.85.0 | 0.1.6 | MIT |
+| >=1.85.0 | 0.1.7 | MIT |
 
 ---
 
@@ -64,7 +64,7 @@ Mao's Thought Guidance is a VS Code extension that uses Mao's Selected Works cor
 
 ### 1. Install
 ```bash
-code --install-extension ChairmanMao-guide-life-0.1.6.vsix
+code --install-extension ChairmanMao-guide-life-0.1.7.vsix
 ```
 
 ### 2. Configure API
@@ -101,6 +101,13 @@ npm run package
 ---
 
 ## Changelog
+
+### v0.1.7
+- Fix streaming output character-by-character jitter (RAF debounce + data-is-stream selector fix)
+- Sidebar now shows usage guide, input hidden
+- Simplify filterGarbled to prevent content loss during streaming
+- Fix history page phase name mapping for all 7 phases
+- Fix history page message count display
 
 ### v0.1.6
 - Fix ServiceWorker load error: CSS extraction via MiniCssExtractPlugin
