@@ -55,8 +55,9 @@ import './globals.css';
         <!-- Messages Area with Adaptive Width (max ~680px centered) -->
         <div id="messagesContainer" class="flex-1 overflow-y-auto py-3 space-y-3" style="background: var(--vscode-editor-background); padding-left: max(12px, calc((100% - 680px) / 2)); padding-right: max(12px, calc((100% - 680px) / 2));">
           <div id="placeholderMsg" class="text-center py-16">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-3" style="background: var(--vscode-sideBar-background);">
-              <span class="text-xl">★</span>
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 overflow-hidden" style="background: var(--vscode-sideBar-background);">
+              <img id="welcomeIcon" src="" alt="★" style="width:36px; height:36px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"/>
+              <span id="welcomeStarFallback" style="display:none; font-size:28px;">★</span>
             </div>
             <p class="text-base font-semibold mb-1" style="color: var(--vscode-editor-foreground);">没有调查，就没有发言权</p>
             <p class="text-sm" style="color: var(--vscode-descriptionForeground);">告诉我你面临的问题，我们一起用实事求是的方法来分析</p>
@@ -103,9 +104,10 @@ import './globals.css';
         <div id="usageArea" class="hidden flex-shrink-0 border-t px-4 py-3" style="background: var(--vscode-sideBar-background); border-color: var(--vscode-sideBar-border);">
           <div class="text-xs space-y-2" style="color: var(--vscode-descriptionForeground);">
             <p class="font-semibold text-sm mb-2" style="color: var(--vscode-editor-foreground);">📖 使用方法</p>
-            <div class="flex items-start gap-2"><span class="font-bold flex-shrink-0" style="color: var(--vscode-button-background);">1.</span><span>点击上方 <span class="px-1.5 py-0.5 rounded text-[10px]" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">＋ 新建对话</span> 开始新会话</span></div>
-            <div class="flex items-start gap-2"><span class="font-bold flex-shrink-0" style="color: var(--vscode-button-background);">2.</span><span>在打开的编辑面板中描述你的问题，AI 会按六阶段法引导分析</span></div>
-            <div class="flex items-start gap-2"><span class="font-bold flex-shrink-0" style="color: var(--vscode-button-background);">3.</span><span>完成后可导出 <span class="px-1 rounded text-[10px]" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);">对话总结报告</span></span></div>
+            <p class="text-[11px] mb-1" style="color: var(--vscode-button-background);"><strong>⚠️ 首次使用必须先配置 API</strong></p>
+            <div class="flex items-start gap-2"><span class="font-bold flex-shrink-0" style="color: var(--vscode-button-background);">1.</span><span>点击上方 ⚙ 进入设置页面</span></div>
+            <div class="flex items-start gap-2"><span class="font-bold flex-shrink-0" style="color: var(--vscode-button-background);">2.</span><span>填入 <span class="px-1 py-0.5 rounded text-[10px]" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);">API Key</span>（从 platform.deepseek.com 获取）</span></div>
+            <div class="flex items-start gap-2"><span class="font-bold flex-shrink-0" style="color: var(--vscode-button-background);">3.</span><span>保存后点击上方 <span class="px-1.5 py-0.5 rounded text-[10px]" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">＋ 新建对话</span> 开始</span></div>
             <div class="border-t pt-2 mt-2" style="border-color: var(--vscode-sideBar-border);"><p class="text-[11px] italic">&ldquo;没有调查，就没有发言权&rdquo;</p></div>
           </div>
         </div>
@@ -113,6 +115,14 @@ import './globals.css';
     `;
     bindEvents();
     toggleSidebarMode();
+    loadIconImage();
+  }
+
+  function loadIconImage() {
+    const img = document.getElementById('welcomeIcon') as HTMLImageElement;
+    if (!img) return;
+    // 图标路径由扩展后端通过 postMessage 发送
+    img.src = ''; // 先用空，等待后端注入；若没有则回退到星星符号
   }
 
   function toggleSidebarMode() {

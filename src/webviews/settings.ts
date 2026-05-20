@@ -75,11 +75,14 @@ import './globals.css';
           </label>
 
           <div id="searchSettings" class="hidden">
-            <label class="block text-xs text-gray-600 mb-1">搜索引擎</label>
-            <select id="searchEngine" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-3 focus:outline-none focus:border-red-500">
-              <option value="serpapi">SerpAPI</option>
-              <option value="bing">Bing Search API</option>
-            </select>
+            <label class="block text-xs text-gray-600 mb-1">搜索引擎（可自定义输入）</label>
+            <input id="searchEngine" type="text" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-3 focus:outline-none focus:border-red-500" 
+              placeholder="serpapi / bing / anysearch / 自定义..." list="searchEngineList" />
+            <datalist id="searchEngineList">
+              <option value="serpapi">
+              <option value="bing">
+              <option value="anysearch">
+            </datalist>
 
             <label class="block text-xs text-gray-600 mb-1">搜索 API Key</label>
             <input id="searchApiKey" type="password" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-4 focus:outline-none focus:border-red-500" 
