@@ -57,7 +57,7 @@ import './globals.css';
               ${session.updatedAt ? `· 更新：${escapeHtml(formatDate(session.updatedAt))}` : ''}
             </p>
             <p class="text-xs text-gray-400 mt-1">
-              阶段：${escapeHtml(getPhaseName(session.currentPhase))} · ${session.messages?.length || 0} 条消息
+              阶段：${escapeHtml(getPhaseName(session.currentPhase))} · ${session.messageCount || 0} 条消息
             </p>
           </div>
           <div class="flex flex-col gap-1.5 flex-shrink-0 ml-2">
@@ -113,10 +113,12 @@ import './globals.css';
   function getPhaseName(phase: string): string {
     const map: Record<string, string> = {
       understanding: '全面了解',
-      contradiction: '主要矛盾',
-      strategy: '战略战术',
-      practice: '实践指导',
-      summary: '总结报告',
+      contradiction: '矛盾分析',
+      condition: '条件评估',
+      strategy: '战略建议',
+      tactics: '战术行动',
+      reflection: '反思迭代',
+      complete: '对话完成',
     };
     return map[phase] || phase;
   }

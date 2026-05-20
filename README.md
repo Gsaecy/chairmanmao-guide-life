@@ -4,9 +4,9 @@
 
 **以毛泽东选集核心思想为指导，帮助你在复杂现实中做最清醒的判断与选择。**
 
-[![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.85.0-blue)](https://code.visualstudio.com/)
-[![Version](https://img.shields.io/badge/version-0.1.6-brightgreen)](https://github.com/Gsaecy/ChairmanMao-guide-life)
-[![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
+| VS Code | Version | License |
+|---------|---------|--------|
+| >=1.85.0 | 0.1.6 | MIT |
 
 </div>
 

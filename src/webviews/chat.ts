@@ -141,12 +141,14 @@ import './globals.css';
     setEl('btnExport', 'click', () => vscode.postMessage({ command: 'exportReport' }));
     
     const inputBox = getEl('inputBox') as HTMLTextAreaElement;
-    inputBox.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSend();
-      }
-    });
+    if (inputBox) {
+      inputBox.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSend();
+        }
+      });
+    }
   }
 
   function setEl(id: string, event: string, handler: () => void) {
@@ -216,10 +218,10 @@ import './globals.css';
 
   function getOrCreateStreamBubble(): HTMLElement {
     const container = getEl('messagesContainer')!;
-    const bubbles = container.querySelectorAll('.flex.justify-start .bg-white');
-    const lastBubble = bubbles[bubbles.length - 1];
-    if (lastBubble && lastBubble.getAttribute('data-is-stream') === 'true') {
-      return lastBubble as HTMLElement;
+    // 修复：用 data-is-stream 属性查找现有流式气泡，而非不存在的 .bg-white 类
+    let streamBubble = container.querySelector('[data-is-stream="true"]') as HTMLElement;
+    if (streamBubble) {
+      return streamBubble;
     }
     
     const msgDiv = document.createElement('div');
@@ -263,16 +265,18 @@ import './globals.css';
   }
 
   // 过滤流式输出中可能泄漏的思考标记和乱码字符
+  // 注意：流式输出过程中只做轻量过滤，避免截断不完整的内容
   function filterGarbled(text: string): string {
     return text
-      // 去除 DeepSeek R1 思考链标记
+      // 去除 DeepSeek R1 完整思考链标记
       .replace(/<\|begin_of_thought\|>[\s\S]*?<\|end_of_thought\|>/g, '')
-      .replace(/<\|begin_of_thought\|>[\s\S]*/g, '')
-      .replace(/思考过程[：:][\s\S]*?(?=\n[^思考])/g, '')
       // 去除反思标记
       .replace(/<\|reflection\|>[\s\S]*?<\|reflection_end\|>/g, '')
-      // 去除多余的思考前缀
-      .replace(/^(嗯|好|让|我来|首先[，,])[\s\S]{0,50}(?=(\n|$))/g, '')
+      // 去除残留的思考标记前缀
+      .replace(/<\|begin_of_thought\|>/g, '')
+      .replace(/<\|end_of_thought\|>/g, '')
+      .replace(/<\|reflection\|>/g, '')
+      .replace(/<\|reflection_end\|>/g, '')
       // 清理连续空行
       .replace(/\n{3,}/g, '\n\n')
       .trim();
@@ -383,13 +387,16 @@ import './globals.css';
           phaseLabel.textContent = phaseShort;
           
           streamingBuffer += text;
+          // 使用 requestAnimationFrame 防抖合并渲染，避免逐字更新
           scheduleStreamRender();
         } else {
           stopStreaming();
           const streamBubble = document.querySelector('[data-is-stream="true"]');
           if (streamBubble) {
             streamBubble.removeAttribute('data-is-stream');
-            const clean = filterGarbled(streamingBuffer || text);
+            // 使用累积的 streamingBuffer 而非 text，确保内容完整
+            const fullText = streamingBuffer || text;
+            const clean = filterGarbled(fullText);
             streamBubble.innerHTML = formatContent(clean);
           }
           streamingBuffer = '';
