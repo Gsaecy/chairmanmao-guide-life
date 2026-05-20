@@ -1,201 +1,127 @@
-# 毛选思想指导 (Mao's Thought Guidance)
+﻿# Mao's Thought Guidance
 
-<div align="center">
-
-**以毛泽东选集核心思想为指导，帮助你在复杂现实中做最清醒的判断与选择�?*
+**AI guidance powered by Mao's Selected Works - analyze problems with pragmatic, clear-headed methodology.**
 
 | VS Code | Version | License |
 |---------|---------|--------|
-| >=1.85.0 | 0.1.7 | MIT |
-
-</div>
+| >=1.85.0 | 0.1.6 | MIT |
 
 ---
 
-## 📖 简�?
+## Introduction
 
-**毛选思想指导** 是一�?VS Code 扩展，以毛泽东选集核心思想为灵魂，化身"毛选思想分身"与你对话。不论你面临职场困境、创业抉择、人际关系还是人生方向问题，都会引导你层层剖析，给出简洁直击要害的分析与建议�?
-
-同时融合**叶子农与丁元英思想综合剖析**中的方法论视角，提供多元化的思想工具�?
-
-> 🎨 v0.1.7 修复 ServiceWorker 加载错误，CSS 独立提取，界面更加稳定�?
+Mao's Thought Guidance is a VS Code extension that uses Mao's Selected Works core principles as its foundation. Whether you face career dilemmas, startup decisions, relationship challenges, or life direction questions, it guides you through layered analysis with concise, sharp insights.
 
 ---
 
-## 🧠 十大核心原则
+## Ten Core Principles
 
-| # | 原则 | 内涵 |
-|---|------|------|
-| �?| **认清形势** | 分清敌我，方向才�?|
-| �?| **没有调查就没有发言�?* | 重事实，不空�?|
-| �?| **抓主要矛�?* | 抓住关键，全局盘活 |
-| �?| **战略与战术结�?* | 战略敢赢，战术做�?|
-| �?| **群众路线** | 把目标变成大家的利益 |
-| �?| **游击战术** | 避实击虚，不硬碰�?|
-| �?| **在实践中学习** | 边干边学，知行合一 |
-| �?| **实事求是** | 一切从实际出发 |
-| �?| **统一战线** | 团结多数，孤立少�?|
-| �?| **自我革新** | 常自省，常更�?|
-
----
-
-## �?功能特色
-
-### 🗣�?智能对话
-- **三阶段渐进式提问**：全面了�?�?分析矛盾 �?制定对策与总结
-- 毛选化身逐步引导，确保全面了解问题后再给出建�?
-- 多轮对话，层层深入，不急于下结�?
-- **回复简洁有�?*，直击要害，不含思考过�?
-
-### 🎨 Apple 风格界面
-- 简洁干净�?Apple 官网风格设计
-- 活动栏侧边栏 + 独立编辑器面板，双模式随心切�?
-- 侧边栏默认显示使用引导，新手友好
-
-### 🎨 三种风格切换
-- **毛选原教旨** �?偏重毛泽东选集经典论述
-- **叶子�?丁元�?* �?偏重方法论与逻辑思辨
-- **平衡融合** �?两者兼�?
-
-### 🔧 灵活配置
-- 默认支持 **DeepSeek** API，兼容所�?OpenAI 格式 API
-- 用户自行配置 API Key、Base URL、模�?
-- 支持联网搜索（SerpAPI / Bing，可选启用）
-
-### 📊 报告导出
-- 一键导出分析报告为 **Markdown** �?**PDF**
-- 完整记录对话内容与分析结�?
-
-### 📂 历史管理
-- 自动保存所有对话历�?
-- 支持搜索、查看、删除历史记�?
-- 对话存储路径可自定义
+| # | Principle | Meaning |
+|---|-----------|---------|
+| 1 | Know the situation | Distinguish friend from foe |
+| 2 | No investigation, no right to speak | Facts first, no empty talk |
+| 3 | Grasp the principal contradiction | Find the key leverage point |
+| 4 | Strategy + tactics combined | Bold direction, solid execution |
+| 5 | Mass line | Align goals with everyone's interests |
+| 6 | Guerrilla tactics | Avoid strength, strike weakness |
+| 7 | Learn through practice | Act and reflect, unite knowing and doing |
+| 8 | Seek truth from facts | Start from actual conditions |
+| 9 | United front | Unite the many, isolate the few |
+| 10 | Self-renewal | Constant reflection and growth |
 
 ---
 
-## 🚀 快速开�?
+## Features
 
-### 1. 安装
-�?VS Code 扩展市场搜索 **"毛选思想指导"** 安装，或下载 `.vsix` 文件手动安装�?
+### Intelligent Conversation
+- Six-phase progressive questioning: Understanding -> Contradiction -> Conditions -> Strategy -> Tactics -> Reflection
+- Multi-turn dialogue, going deeper without rushing to conclusions
+- Concise, powerful replies that hit the core
+
+### Theme-adaptive UI
+- Clean design that follows VS Code system theme (dark/light)
+- Activity bar sidebar + independent editor panel
+- Sidebar shows usage guide by default
+
+### Three Style Modes
+- **Mao Originalist** - Focus on Mao's classic texts
+- **Ye Zinong / Ding Yuanying** - Focus on methodology and logic
+- **Balanced Fusion** - Best of both
+
+### Flexible Configuration
+- Default support for **DeepSeek** API, compatible with all OpenAI-format APIs
+- Optional web search (SerpAPI / Bing / AnySearch)
+
+### Report Export
+- One-click export of analysis reports as **Markdown**
+
+### History Management
+- Auto-saves all conversations, view and delete history records
+
+---
+
+## Quick Start
+
+### 1. Install
 ```bash
 code --install-extension ChairmanMao-guide-life-0.1.6.vsix
 ```
 
-### 2. 配置 API
-1. 点击 VS Code 活动栏中�?**毛选思想指导** 图标
-2. 在对话面板中点击齿轮图标 �?打开设置
-3. 填入 API 信息�?
-   - **API Base URL**：`https://api.deepseek.com`（默认）
-   - **API Key**：从 [platform.deepseek.com](https://platform.deepseek.com) 获取
-   - **Model**：`deepseek-chat`
-4. 保存后即可开始对�?
-
-### 3. 开始咨�?
-直接描述你面临的问题，毛选分身会开始引导你深入剖析�?
-
-### 4. 快捷命令
-| 命令 | 说明 |
-|------|------|
-| `毛选思想指导: 新建会话` | 开始新咨询会话 |
-| `毛选思想指导: 打开对话` | 打开独立对话面板 |
-| `毛选思想指导: 打开历史记录` | 浏览过往对话 |
-| `毛选思想指导: 打开设置` | 配置 API 和偏�?|
-| `毛选思想指导: 导出分析报告` | 导出 Markdown/PDF |
-| `毛选思想指导: 清理历史记录` | 清空历史数据 |
+### 2. Configure API
+1. Click gear icon in chat panel to open Settings
+2. Fill in: API Key from [platform.deepseek.com](https://platform.deepseek.com)
+3. Save and start chatting
 
 ---
 
-## ⚙️ 配置�?
+## Configuration
 
-| 配置�?| 说明 | 默认�?|
-|--------|------|--------|
-| `maoxuan.apiKey` | API Key | �?|
-| `maoxuan.apiBaseUrl` | API 地址 | `https://api.deepseek.com` |
-| `maoxuan.model` | 模型名称 | `deepseek-chat` |
-| `maoxuan.temperature` | 温度参数 (0-2) | `0.7` |
-| `maoxuan.maxTokens` | 最大输�?Token | `4096` |
-| `maoxuan.style` | 对话风格 (maoxuan/yedinying/balanced) | `balanced` |
-| `maoxuan.storagePath` | 对话存储路径 | `~/.maoxuan-guidance` |
-| `maoxuan.webSearchEnabled` | 启用联网搜索 | `true` |
-| `maoxuan.searchApiKey` | 搜索引擎 API Key | �?|
-| `maoxuan.searchEngine` | 搜索引擎 (serpapi/bing) | `serpapi` |
+| Key | Description | Default |
+|-----|-------------|---------|
+| maoxuan.apiKey | API Key | - |
+| maoxuan.apiBaseUrl | API Base URL | https://api.deepseek.com |
+| maoxuan.model | Model name | deepseek-chat |
+| maoxuan.temperature | Temperature (0-2) | 0.7 |
+| maoxuan.maxTokens | Max output tokens | 4096 |
+| maoxuan.style | Style (maoxuan/yedinying/balanced) | balanced |
+| maoxuan.searchEngine | Search engine | serpapi |
 
 ---
 
-## 🏗�?开�?
+## Development
 
 ```bash
-# 克隆仓库
 git clone https://github.com/Gsaecy/ChairmanMao-guide-life.git
 cd ChairmanMao-guide-life
-
-# 安装依赖
 npm install
-
-# 开发模式（自动监听�?
-npm run watch
-
-# 生产构建
 npm run vscode:prepublish
-
-# 打包 VSIX
 npm run package
-
-# 安装到本�?VSCode 测试
-code --install-extension ChairmanMao-guide-life-0.1.7.vsix
 ```
 
-**技术栈**：TypeScript · Webpack · Tailwind CSS · VS Code Extension API
-
 ---
 
-## 📋 更新日志
+## Changelog
 
-### v0.1.7
-- 🐛 **修复 ServiceWorker 加载错误**：CSS 改用独立文件提取，解决所有界面加载失败问�?
-- 🔧 webpack �?`style-loader` �?`MiniCssExtractPlugin`
 ### v0.1.6
-- 🐛 **修复 ServiceWorker 加载错误**：CSS 改用 MiniCssExtractPlugin 独立提取
-- 🔧 webpack `style-loader` → `MiniCssExtractPlugin`，产出独立 .css 文件
+- Fix ServiceWorker load error: CSS extraction via MiniCssExtractPlugin
+
 ### v0.1.5
-- 🎨 **全新布局重构**：新建对话按钮置于顶部，消息区自适应宽度（最�?80px居中�?
-- 🏷�?**自动标注阶段**：每�?AI 回复自动显示当前对话阶段标签
-- 🌐 **英文描述修复**：扩展介绍改为英文，修复中文编码问号乱码问题
-- 🗑�?侧边栏移除「对话阶段」导航模块，更简�?
-- 🎯 导出报告按钮移至阶段导航栏，方便即时导出
+- New layout: responsive message area, auto phase labeling
+- English description to fix encoding issues
+- Sidebar phase navigation removed
 
 ### v0.1.4
-- 🎨 **UI 全面优化**：输入框默认增大�?行），支持垂直拖拽调�?
-- 🌗 **跟随 VS Code 主题**：整个界面使用主�?CSS 变量，深�?浅色主题自动适配
-- 📋 **历史页面优化**：新增「查看对话」按钮，可直接进入历史对话继续交�?
-- 🗑�?删除按钮改为「清除该记录」文字，操作更清�?
-- 🐛 修复面板图标缺失导致问号乱码的问�?
-- 🐛 修复流式输出逐字刷屏问题（requestAnimationFrame 防抖�?
+- Input box enlarged, vertical resize supported
+- Full VS Code theme adaptation
+- History page: View Conversation button, Clear Record button
+- Fixed missing panel icon and streaming output issues
 
 ### v0.1.3
-- 🎨 全新 Apple 风格简�?UI
-- 🔧 侧边栏默认显示引导内容，不再空白
-- 🐛 修复回复中出现乱码文字的问题
-- 📏 回复更简洁，去掉思考过程，直击要害
-
-### v0.1.0 - 0.1.2
-- 初始发布
-- 三阶段渐进式对话
-- 三种风格切换
-- 报告导出、历史管�?
+- New Apple-style clean UI
+- Sidebar shows guidance content
 
 ---
 
-## 📜 许可
+## License
 
-MIT License © 2025 Gsaecy
-
----
-
-<div align="center">
-
-**"没有调查就没有发言�? �?毛泽�?*
-
-*先看清问题全貌，再做清醒抉择�?
-
-</div>
+MIT License (c) 2025 Gsaecy
