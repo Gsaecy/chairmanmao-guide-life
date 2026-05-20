@@ -1,0 +1,15 @@
+.vscode/**
+.gitignore
+.vscodeignore
+node_modules/**
+src/**
+tsconfig.json
+webpack.config.js
+tailwind.config.js
+postcss.config.js
+package-lock.json
+scripts/**
+*.md
+!README.md
+毛选*.txt
+叶*.txt

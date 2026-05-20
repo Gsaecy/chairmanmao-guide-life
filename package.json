@@ -5,6 +5,10 @@
   "version": "0.1.0",
   "publisher": "Gsaecy",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gsaecy/ChairmanMao-guide-life"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -137,7 +141,10 @@
         "maoxuan.searchEngine": {
           "type": "string",
           "default": "serpapi",
-          "enum": ["serpapi", "bing"],
+          "enum": [
+            "serpapi",
+            "bing"
+          ],
           "description": "搜索引擎选择"
         },
         "maoxuan.temperature": {
@@ -157,7 +164,11 @@
         "maoxuan.style": {
           "type": "string",
           "default": "balanced",
-          "enum": ["maoxuan", "yedinying", "balanced"],
+          "enum": [
+            "maoxuan",
+            "yedinying",
+            "balanced"
+          ],
           "enumDescriptions": [
             "偏重毛选原教旨主义风格",
             "偏重叶子农/丁元英方法论风格",
@@ -188,14 +199,17 @@
     "tailwindcss": "^3.4.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.3.3",
+    "vsce": "^2.15.0",
     "webpack": "^5.90.0",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "jspdf": "^2.5.1",
+    "cheerio": "^1.0.0-rc.12",
     "dompurify": "^3.0.8",
+    "jspdf": "^2.5.1",
     "marked": "^11.1.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "undici": "^5.28.4"
   }
 }
