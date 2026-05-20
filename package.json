@@ -2,7 +2,7 @@
   "name": "ChairmanMao-guide-life",
   "displayName": "毛选思想指导",
   "description": "以毛泽东选集核心思想指导判断和行动的智慧对话扩展",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "publisher": "honor-world",
   "license": "MIT",
   "repository": {
@@ -24,6 +24,7 @@
   "activationEvents": [
     "onView:maoxuan.chatPanel"
   ],
+  "icon": "media/icon.png",
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {

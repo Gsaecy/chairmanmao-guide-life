@@ -47,11 +47,11 @@ import './globals.css';
     container.innerHTML = sessions
       .map(
         (session) => `
-      <div class="bg-white border border-red-200 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer session-card"
+      <div class="bg-white border border-red-200 rounded-lg p-3 session-card"
            data-session-id="${escapeHtml(session.id)}">
         <div class="flex justify-between items-start">
-          <div class="flex-1">
-            <h3 class="text-sm font-bold text-red-800 mb-1">${escapeHtml(session.title || '未命名对话')}</h3>
+          <div class="flex-1 min-w-0">
+            <h3 class="text-sm font-bold text-red-800 mb-1 truncate">${escapeHtml(session.title || '未命名对话')}</h3>
             <p class="text-xs text-gray-500">
               创建：${escapeHtml(formatDate(session.createdAt))} 
               ${session.updatedAt ? `· 更新：${escapeHtml(formatDate(session.updatedAt))}` : ''}
@@ -60,31 +60,35 @@ import './globals.css';
               阶段：${escapeHtml(getPhaseName(session.currentPhase))} · ${session.messages?.length || 0} 条消息
             </p>
           </div>
-          <button class="delete-btn text-xs text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded"
-                  data-session-id="${escapeHtml(session.id)}"
-                  title="删除">
-            ✕
-          </button>
+          <div class="flex flex-col gap-1.5 flex-shrink-0 ml-2">
+            <button class="view-btn text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-medium transition-colors whitespace-nowrap"
+                    data-session-id="${escapeHtml(session.id)}">
+              查看对话
+            </button>
+            <button class="delete-btn text-xs text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded whitespace-nowrap"
+                    data-session-id="${escapeHtml(session.id)}"
+                    title="删除该记录">
+              清除该记录
+            </button>
+          </div>
         </div>
       </div>
     `
       )
       .join('');
 
-    // 绑定点击事件
-    container.querySelectorAll('.session-card').forEach((card) => {
-      card.addEventListener('click', (e) => {
-        const target = e.target as HTMLElement;
-        // 如果点击了删除按钮，不触导航
-        if (target.classList.contains('delete-btn')) return;
-        
-        const sessionId = card.getAttribute('data-session-id');
+    // 绑定查看对话按钮事件
+    container.querySelectorAll('.view-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const sessionId = (btn as HTMLElement).getAttribute('data-session-id');
         if (sessionId) {
           vscode.postMessage({ command: 'selectSession', payload: { sessionId } });
         }
       });
     });
 
+    // 绑定清除记录按钮事件
     container.querySelectorAll('.delete-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();

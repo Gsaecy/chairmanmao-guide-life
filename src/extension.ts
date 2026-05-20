@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
 import { StorageManager } from './backend/storage';
 import { DialogueManager } from './backend/dialogue';
-import { ChatPanel, SettingsPanel, HistoryPanel } from './panels';
+import { ChatPanel, ChatViewProvider, SettingsPanel, HistoryPanel } from './panels';
 
 let storageManager: StorageManager;
 let dialogueManager: DialogueManager;
 let chatPanel: ChatPanel | undefined;
+let chatViewProvider: ChatViewProvider | undefined;
 let settingsPanel: SettingsPanel | undefined;
 let historyPanel: HistoryPanel | undefined;
 
@@ -13,6 +14,12 @@ export function activate(context: vscode.ExtensionContext) {
   // 初始化核心服务
   storageManager = new StorageManager(context);
   dialogueManager = new DialogueManager(storageManager);
+
+  // 注册侧边栏 WebviewView Provider —— 解决侧边栏空白问题
+  chatViewProvider = new ChatViewProvider(context.extensionUri, storageManager, dialogueManager);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(ChatViewProvider.viewType, chatViewProvider)
+  );
 
   // 注册命令
   const newSessionCmd = vscode.commands.registerCommand('maoxuan-guidance.newSession', () => {
@@ -56,7 +63,6 @@ export function activate(context: vscode.ExtensionContext) {
       'md'
     );
     vscode.window.showInformationMessage(`报告已导出至：${filePath}`);
-    // 打开文件
     const doc = await vscode.workspace.openTextDocument(filePath);
     await vscode.window.showTextDocument(doc);
   });

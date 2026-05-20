@@ -5,7 +5,7 @@
 **以毛泽东选集核心思想为指导，帮助你在复杂现实中做最清醒的判断与选择。**
 
 [![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.85.0-blue)](https://code.visualstudio.com/)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen)](https://github.com/Gsaecy/ChairmanMao-guide-life)
+[![Version](https://img.shields.io/badge/version-0.1.4-brightgreen)](https://github.com/Gsaecy/ChairmanMao-guide-life)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
 </div>
@@ -14,9 +14,11 @@
 
 ## 📖 简介
 
-**毛选思想指导** 是一个 VS Code 扩展，它以毛泽东选集核心思想为灵魂，化身"毛选思想分身"与你对话。不论你面临的是职场困境、创业抉择、人际关系还是人生方向问题，它都会引导你层层剖析，给出符合事物运行规律的分析与建议。
+**毛选思想指导** 是一个 VS Code 扩展，以毛泽东选集核心思想为灵魂，化身"毛选思想分身"与你对话。不论你面临职场困境、创业抉择、人际关系还是人生方向问题，都会引导你层层剖析，给出简洁直击要害的分析与建议。
 
-同时融合了**叶子农与丁元英思想综合剖析**中的方法论视角，提供多元化的思想工具。
+同时融合**叶子农与丁元英思想综合剖析**中的方法论视角，提供多元化的思想工具。
+
+> 🎨 v0.1.4 全新主题自适应界面，全面适配 VS Code 深色/浅色主题。
 
 ---
 
@@ -40,9 +42,15 @@
 ## ✨ 功能特色
 
 ### 🗣️ 智能对话
-- **三阶段渐进式提问**：快速诊断 → 深度剖析 → 综合建议
-- 毛选化身逐步引导，确保全面了解你的问题后再给出建议
+- **三阶段渐进式提问**：全面了解 → 分析矛盾 → 制定对策与总结
+- 毛选化身逐步引导，确保全面了解问题后再给出建议
 - 多轮对话，层层深入，不急于下结论
+- **回复简洁有力**，直击要害，不含思考过程
+
+### 🎨 Apple 风格界面
+- 简洁干净的 Apple 官网风格设计
+- 活动栏侧边栏 + 独立编辑器面板，双模式随心切换
+- 侧边栏默认显示使用引导，新手友好
 
 ### 🎨 三种风格切换
 - **毛选原教旨** — 偏重毛泽东选集经典论述
@@ -50,8 +58,8 @@
 - **平衡融合** — 两者兼顾
 
 ### 🔧 灵活配置
-- 默认支持 **DeepSeek** API，也兼容所有 OpenAI 格式 API
-- 用户自行配置 API Key、Base URL、模型名称
+- 默认支持 **DeepSeek** API，兼容所有 OpenAI 格式 API
+- 用户自行配置 API Key、Base URL、模型
 - 支持联网搜索（SerpAPI / Bing，可选启用）
 
 ### 📊 报告导出
@@ -70,13 +78,13 @@
 ### 1. 安装
 从 VS Code 扩展市场搜索 **"毛选思想指导"** 安装，或下载 `.vsix` 文件手动安装：
 ```bash
-code --install-extension ChairmanMao-guide-life-0.1.0.vsix
+code --install-extension ChairmanMao-guide-life-0.1.4.vsix
 ```
 
 ### 2. 配置 API
 1. 点击 VS Code 活动栏中的 **毛选思想指导** 图标
-2. 在对话面板中输入 `@setup` 或点击齿轮图标打开设置
-3. 填入你的 API 信息：
+2. 在对话面板中点击齿轮图标 ⚙ 打开设置
+3. 填入 API 信息：
    - **API Base URL**：`https://api.deepseek.com`（默认）
    - **API Key**：从 [platform.deepseek.com](https://platform.deepseek.com) 获取
    - **Model**：`deepseek-chat`
@@ -88,11 +96,11 @@ code --install-extension ChairmanMao-guide-life-0.1.0.vsix
 ### 4. 快捷命令
 | 命令 | 说明 |
 |------|------|
-| `毛选思想指导: 打开对话` | 打开对话面板 |
-| `毛选思想指导: 新建会话` | 开始新的咨询会话 |
+| `毛选思想指导: 新建会话` | 开始新咨询会话 |
+| `毛选思想指导: 打开对话` | 打开独立对话面板 |
 | `毛选思想指导: 打开历史记录` | 浏览过往对话 |
 | `毛选思想指导: 打开设置` | 配置 API 和偏好 |
-| `毛选思想指导: 导出分析报告` | 导出 Markdown/PDF 报告 |
+| `毛选思想指导: 导出分析报告` | 导出 Markdown/PDF |
 | `毛选思想指导: 清理历史记录` | 清空历史数据 |
 
 ---
@@ -128,16 +136,48 @@ npm install
 npm run watch
 
 # 生产构建
-npm run compile
+npm run vscode:prepublish
 
 # 打包 VSIX
 npm run package
 
 # 安装到本地 VSCode 测试
-code --install-extension ChairmanMao-guide-life-0.1.0.vsix
+code --install-extension ChairmanMao-guide-life-0.1.4.vsix
 ```
 
 **技术栈**：TypeScript · Webpack · Tailwind CSS · VS Code Extension API
+
+---
+
+## 📋 更新日志
+
+### v0.1.4
+- 🎨 **UI 全面优化**：输入框默认增大（5行），支持垂直拖拽调整
+- 🌗 **跟随 VS Code 主题**：整个界面使用主题 CSS 变量，深色/浅色主题自动适配
+- 📋 **历史页面优化**：新增「查看对话」按钮，可直接进入历史对话继续交流
+- 🗑️ 删除按钮改为「清除该记录」文字，操作更清晰
+- 🐛 修复面板图标缺失导致问号乱码的问题
+- 🐛 修复流式输出逐字刷屏问题（requestAnimationFrame 防抖）
+
+### v0.1.4
+- 🎨 **UI 全面优化**：输入框默认增大（5行），支持垂直拖拽调整
+- 🌗 **跟随 VS Code 主题**：整个界面使用主题 CSS 变量，深色/浅色主题自动适配
+- 📋 **历史页面优化**：新增「查看对话」按钮，可直接进入历史对话继续交流
+- 🗑️ 删除按钮改为「清除该记录」文字，操作更清晰
+- 🐛 修复面板图标缺失导致问号乱码的问题
+- 🐛 修复流式输出逐字刷屏问题（requestAnimationFrame 防抖）
+
+### v0.1.3
+- 🎨 全新 Apple 风格简洁 UI
+- 🔧 侧边栏默认显示引导内容，不再空白
+- 🐛 修复回复中出现乱码文字的问题
+- 📏 回复更简洁，去掉思考过程，直击要害
+
+### v0.1.0 - 0.1.2
+- 初始发布
+- 三阶段渐进式对话
+- 三种风格切换
+- 报告导出、历史管理
 
 ---
 

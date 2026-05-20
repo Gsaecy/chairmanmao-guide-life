@@ -20,6 +20,7 @@ interface ChatCompletionChunk {
   choices: {
     delta: {
       content?: string;
+      reasoning_content?: string; // DeepSeek R1 的思考链——需要过滤掉
     };
     index: number;
     finish_reason: string | null;
@@ -101,38 +102,52 @@ export function streamChat(
     let buffer = '';
 
     res.on('data', (chunk: Buffer) => {
-      buffer += chunk.toString();
-      const lines = buffer.split('\n');
-      buffer = lines.pop() || '';
+      // 将 Buffer 转为字符串，用 TextDecoder 确保 UTF-8 多字节字符不被截断
+      buffer += chunk.toString('utf-8');
+      // 按 "\n\n" 分割 SSE 事件（而非单行），避免在 UTF-8 多字节边界切开
+      const events = buffer.split('\n\n');
+      // 最后一个可能不完整，保留到下次
+      buffer = events.pop() || '';
 
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed || !trimmed.startsWith('data: ')) continue;
-        const data = trimmed.slice(6);
-        if (data === '[DONE]') continue;
+      for (const event of events) {
+        const lines = event.split('\n');
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data: ')) continue;
+          const data = trimmed.slice(6);
+          if (data === '[DONE]') continue;
 
-        try {
-          const parsed: ChatCompletionChunk = JSON.parse(data);
-          const content = parsed.choices?.[0]?.delta?.content;
-          if (content) {
-            fullText += content;
-            onChunk(content);
-          }
-        } catch {}
+          try {
+            const parsed: ChatCompletionChunk = JSON.parse(data);
+            // 只取 content，忽略 reasoning_content（思考过程）—— 避免乱码和超长回复
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullText += content;
+              onChunk(content);
+            }
+          } catch {}
+        }
       }
     });
-
+     
     res.on('end', () => {
-      // 处理缓冲中剩余数据
-      if (buffer.trim().startsWith('data: ') && buffer.trim() !== 'data: [DONE]') {
-        try {
-          const parsed: ChatCompletionChunk = JSON.parse(buffer.trim().slice(6));
-          const content = parsed.choices?.[0]?.delta?.content;
-          if (content) {
-            fullText += content;
-            onChunk(content);
-          }
-        } catch {}
+      // 处理剩余的 SSE 事件
+      if (buffer.trim()) {
+        const lines = buffer.split('\n');
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed || !trimmed.startsWith('data: ') || trimmed === 'data: [DONE]') continue;
+          const data = trimmed.slice(6);
+          try {
+            const parsed: ChatCompletionChunk = JSON.parse(data);
+            // 只取 content，忽略 reasoning_content
+            const content = parsed.choices?.[0]?.delta?.content;
+            if (content) {
+              fullText += content;
+              onChunk(content);
+            }
+          } catch {}
+        }
       }
       onComplete(fullText);
     });
