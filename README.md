@@ -5,7 +5,7 @@
 **以毛泽东选集核心思想为指导，帮助你在复杂现实中做最清醒的判断与选择。**
 
 [![VS Code](https://img.shields.io/badge/VS%20Code-%3E%3D1.85.0-blue)](https://code.visualstudio.com/)
-[![Version](https://img.shields.io/badge/version-0.1.5-brightgreen)](https://github.com/Gsaecy/ChairmanMao-guide-life)
+[![Version](https://img.shields.io/badge/version-0.1.6-brightgreen)](https://github.com/Gsaecy/ChairmanMao-guide-life)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](LICENSE)
 
 </div>
@@ -18,7 +18,7 @@
 
 同时融合**叶子农与丁元英思想综合剖析**中的方法论视角，提供多元化的思想工具。
 
-> 🎨 v0.1.5 全新布局重构：自适应宽度、自动标注阶段、英文描述修复。
+> 🎨 v0.1.6 修复 ServiceWorker 加载错误，CSS 独立提取，界面更加稳定。
 
 ---
 
@@ -78,7 +78,7 @@
 ### 1. 安装
 从 VS Code 扩展市场搜索 **"毛选思想指导"** 安装，或下载 `.vsix` 文件手动安装：
 ```bash
-code --install-extension ChairmanMao-guide-life-0.1.5.vsix
+code --install-extension ChairmanMao-guide-life-0.1.6.vsix
 ```
 
 ### 2. 配置 API
@@ -142,7 +142,7 @@ npm run vscode:prepublish
 npm run package
 
 # 安装到本地 VSCode 测试
-code --install-extension ChairmanMao-guide-life-0.1.5.vsix
+code --install-extension ChairmanMao-guide-life-0.1.6.vsix
 ```
 
 **技术栈**：TypeScript · Webpack · Tailwind CSS · VS Code Extension API
@@ -150,6 +150,10 @@ code --install-extension ChairmanMao-guide-life-0.1.5.vsix
 ---
 
 ## 📋 更新日志
+
+### v0.1.6
+- 🐛 **修复 ServiceWorker 加载错误**：CSS 改用独立文件提取，解决所有界面加载失败问题
+- 🔧 webpack 中 `style-loader` → `MiniCssExtractPlugin`
 
 ### v0.1.5
 - 🎨 **全新布局重构**：新建对话按钮置于顶部，消息区自适应宽度（最大680px居中）
