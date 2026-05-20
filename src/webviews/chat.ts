@@ -9,34 +9,48 @@ import './globals.css';
   let isStreaming = false;
   let currentPhase = 'understanding';
   let sessionLoaded = false;
-  let isSidebar = false; // 是否侧边栏模式
+
   let currentStyle: string = 'balanced'; // 当前对话风格
 
-  // 流式渲染防抖——50ms节流+RAF合并，避免逐字跳动
+  // 流式渲染防抖——60ms节流+RAF合并，避免逐字跳动（修复逐字渲染问题）
   let rafPending = false;
   let rafId: number | null = null;
   let lastRenderTime = 0;
-  const MIN_RENDER_INTERVAL = 60; // 最快60ms刷新一次，避免逐字跳动
+  const MIN_RENDER_INTERVAL = 60; // 最快60ms刷新一次
 
   function scheduleStreamRender() {
-    const now = performance.now();
     if (rafPending) return;
     rafPending = true;
     if (rafId !== null) cancelAnimationFrame(rafId);
-    // 如果距上次渲染不足 MIN_RENDER_INTERVAL，则等待；否则立即 RAF 渲染
-    const delay = Math.max(0, MIN_RENDER_INTERVAL - (now - lastRenderTime));
     rafId = requestAnimationFrame(() => {
       rafPending = false;
       rafId = null;
+      const now = performance.now();
+      if (now - lastRenderTime < MIN_RENDER_INTERVAL) return;
+      lastRenderTime = now;
       const bubble = document.querySelector('[data-is-stream="true"]') as HTMLElement;
       if (!bubble) return;
-      if (performance.now() - lastRenderTime < MIN_RENDER_INTERVAL) return; // 二次确认不超速
-      lastRenderTime = performance.now();
       const clean = filterGarbled(streamingBuffer);
       bubble.innerHTML = formatContent(clean);
       const container = getEl('messagesContainer')!;
       container.scrollTop = container.scrollHeight;
     });
+  }
+
+  // 强制立即渲染（停止流式时使用）
+  function forceStreamRender() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    rafPending = false;
+    const bubble = document.querySelector('[data-is-stream="true"]') as HTMLElement;
+    if (!bubble) return;
+    lastRenderTime = performance.now();
+    const clean = filterGarbled(streamingBuffer);
+    bubble.innerHTML = formatContent(clean);
+    const container = getEl('messagesContainer')!;
+    container.scrollTop = container.scrollHeight;
   }
 
   const app = document.getElementById('root')!;
@@ -124,38 +138,13 @@ import './globals.css';
       </div>
     `;
     bindEvents();
-    toggleSidebarMode();
     loadIconImage();
   }
 
   function loadIconImage() {
     const img = document.getElementById('welcomeIcon') as HTMLImageElement;
     if (!img) return;
-    // 图标路径由扩展后端通过 postMessage 发送
-    img.src = ''; // 先用空，等待后端注入；若没有则回退到星星符号
-  }
-
-  function toggleSidebarMode() {
-    const inputArea = getEl('inputArea');
-    const usageArea = getEl('usageArea');
-    const phaseNav = getEl('phaseNav');
-    if (!inputArea || !usageArea || !phaseNav) return;
-    if (isSidebar) {
-      inputArea.classList.add('hidden');
-      phaseNav.classList.add('hidden');
-      usageArea.classList.remove('hidden');
-    } else {
-      inputArea.classList.remove('hidden');
-      phaseNav.classList.remove('hidden');
-      usageArea.classList.add('hidden');
-    }
-  }
-
-  function updateInputFocus() {
-    setTimeout(() => {
-      const inputBox = getEl('inputBox') as HTMLTextAreaElement;
-      if (inputBox && isSidebar) inputBox.focus();
-    }, 150);
+    img.src = '';
   }
 
   function bindEvents() {
@@ -386,32 +375,7 @@ import './globals.css';
         break;
 
       case 'showWelcome':
-        // 侧边栏模式 —— 处理 ChatViewProvider 发送的欢迎信息
-        isSidebar = true;
-        toggleSidebarMode();
-        {
-          const iconUri = message.payload.iconUri || '';
-          const placeholder = getEl('placeholderMsg');
-          if (placeholder) {
-            const phases = message.payload.phases || [];
-            const phaseItems = phases.map((p: any) => 
-              `<span class="inline-flex items-center gap-1 text-xs" style="color: var(--vscode-descriptionForeground);"><span>${p.icon}</span>${p.name}</span>`
-            ).join('<span style="color: var(--vscode-input-border);"> → </span>');
-            const iconHtml = iconUri
-              ? `<img src="${iconUri}" alt="★" style="width:48px; height:48px; object-fit:contain; border-radius:50%;" />`
-              : `<span class="text-xl">★</span>`;
-            placeholder.innerHTML = `
-              <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-3" style="background: var(--vscode-sideBar-background);">
-                ${iconHtml}
-              </div>
-              <p class="text-base font-semibold mb-1" style="color: var(--vscode-editor-foreground);">${message.payload.title}</p>
-              <p class="text-sm mb-4" style="color: var(--vscode-descriptionForeground);">${message.payload.subtitle}</p>
-              <div class="flex flex-wrap justify-center gap-2">${phaseItems}</div>
-            `;
-          }
-        }
-        // 侧边栏模式下，点击新建话题按钮后自动聚焦输入框
-        updateInputFocus();
+        // 侧边栏不再使用 chat webview，此消息不再处理
         break;
 
       case 'streamStart':
@@ -557,7 +521,7 @@ import './globals.css';
         overlay.remove();
         setTimeout(() => {
           const inputBox = getEl('inputBox') as HTMLTextAreaElement;
-          if (inputBox && !isSidebar) inputBox.focus();
+          if (inputBox) inputBox.focus();
         }, 100);
       }
     });

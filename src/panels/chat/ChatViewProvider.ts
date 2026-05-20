@@ -1,11 +1,10 @@
 import * as vscode from 'vscode';
 import { StorageManager } from '../../backend/storage';
 import { DialogueManager } from '../../backend/dialogue';
-import { SessionData } from '../../types';
 
 /**
  * 侧边栏 Webview View Provider
- * 在侧边栏中显示对话界面
+ * 在侧边栏中显示导航信息（不再承载对话功能）
  */
 export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'maoxuan.chatPanel';
@@ -35,85 +34,34 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.html = this._getHtmlContent(webviewView.webview);
     this._setMessageListener(webviewView);
 
-    // 显示引导内容
+    // 发送图标 URI
     const welcomeIconUri = webviewView.webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, 'media', 'welcome-icon.png')
     );
     webviewView.webview.postMessage({
-      command: 'showWelcome',
-      payload: {
-        title: '没有调查，就没有发言权',
-        subtitle: '告诉我你面临的问题，让我们一起用实事求是的方法来分析',
-        iconUri: welcomeIconUri.toString(),
-        phases: [
-          { name: '全面了解', icon: '🔍', desc: '说清你的情况和条件' },
-          { name: '矛盾分析', icon: '⚡', desc: '抓主要矛盾' },
-          { name: '条件评估', icon: '📊', desc: '立足自身条件' },
-          { name: '战略建议', icon: '🧭', desc: '方向性判断' },
-          { name: '战术行动', icon: '🎯', desc: '具体可执行步骤' },
-          { name: '反思迭代', icon: '🔄', desc: '审视盲区' },
-        ],
-      },
+      command: 'setIcon',
+      payload: welcomeIconUri.toString(),
+    });
+
+    // 刷新 API 状态
+    const config = this._storage.getConfig();
+    webviewView.webview.postMessage({
+      command: 'updateApiStatus',
+      payload: { configured: !!(config.apiKey && config.apiKey.trim()) },
+    });
+    webviewView.webview.postMessage({
+      command: 'updateStyle',
+      payload: config.style || 'balanced',
     });
   }
 
   private _setMessageListener(webviewView: vscode.WebviewView): void {
     webviewView.webview.onDidReceiveMessage(async (message) => {
       switch (message.command) {
-        case 'createSession': {
-          try {
-            const session = this._dialogue.startNewSession(message.payload.title, message.payload.style);
-            webviewView.webview.postMessage({
-              command: 'sessionCreated',
-              payload: session,
-            });
-          } catch (err) {
-            vscode.window.showErrorMessage(`创建对话失败: ${err}`);
-          }
+        case 'newChatSession':
+          // 打开独立的对话面板（新建对话）
+          vscode.commands.executeCommand('maoxuan-guidance.newSession');
           break;
-        }
-
-        case 'sendMessage': {
-          try {
-            webviewView.webview.postMessage({ command: 'streamStart' });
-            await this._dialogue.sendMessage(message.payload.content);
-            webviewView.webview.postMessage({ command: 'streamEnd' });
-          } catch (err) {
-            webviewView.webview.postMessage({
-              command: 'error',
-              payload: err instanceof Error ? err.message : '发送消息失败',
-            });
-          }
-          break;
-        }
-
-        case 'abort':
-          this._dialogue.abort();
-          webviewView.webview.postMessage({ command: 'streamEnd' });
-          break;
-
-        case 'advancePhase':
-          this._dialogue.advancePhase();
-          break;
-
-        case 'exportReport': {
-          try {
-            const report = this._dialogue.generateReport();
-            const session = this._dialogue.getCurrentSession();
-            if (session) {
-              const filePath = this._storage.saveReport(session.id, report, 'md');
-              const doc = await vscode.workspace.openTextDocument(filePath);
-              await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside });
-            }
-            webviewView.webview.postMessage({
-              command: 'reportReady',
-              payload: report,
-            });
-          } catch (err) {
-            vscode.window.showErrorMessage(`生成报告失败: ${err}`);
-          }
-          break;
-        }
 
         case 'openSettings':
           vscode.commands.executeCommand('maoxuan-guidance.openSettings');
@@ -122,43 +70,36 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         case 'openHistory':
           vscode.commands.executeCommand('maoxuan-guidance.openHistory');
           break;
-
-        case 'newSession':
-          webviewView.webview.postMessage({ command: 'promptNewSession' });
-          break;
       }
     });
 
-    // 监听 dialogue 事件
-    this._dialogue.onMessage((text, done) => {
-      webviewView.webview.postMessage({
-        command: 'assistantMessage',
-        payload: { text, done },
-      });
-    });
-
-    this._dialogue.onPhaseChange((phase, label) => {
-      webviewView.webview.postMessage({
-        command: 'phaseChange',
-        payload: { phase, label },
-      });
+    // 当配置变化时，更新侧边栏状态
+    webviewView.onDidChangeVisibility(() => {
+      if (webviewView.visible && this._view) {
+        const config = this._storage.getConfig();
+        this._view.webview.postMessage({
+          command: 'updateApiStatus',
+          payload: { configured: !!(config.apiKey && config.apiKey.trim()) },
+        });
+        this._view.webview.postMessage({
+          command: 'updateStyle',
+          payload: config.style || 'balanced',
+        });
+      }
     });
   }
 
-  public loadSession(session: SessionData): void {
+  public refreshStatus(): void {
     if (this._view) {
+      const config = this._storage.getConfig();
       this._view.webview.postMessage({
-        command: 'loadSession',
-        payload: session,
+        command: 'updateApiStatus',
+        payload: { configured: !!(config.apiKey && config.apiKey.trim()) },
       });
-      this._view.show(true);
-    }
-  }
-
-  public newSession(): void {
-    if (this._view) {
-      this._view.webview.postMessage({ command: 'promptNewSession' });
-      this._view.show(true);
+      this._view.webview.postMessage({
+        command: 'updateStyle',
+        payload: config.style || 'balanced',
+      });
     }
   }
 
@@ -170,10 +111,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
   private _getHtmlContent(webview: vscode.Webview): string {
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'dist', 'chat.js')
+      vscode.Uri.joinPath(this._extensionUri, 'dist', 'sidebar.js')
     );
     const styleUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, 'dist', 'chat.css')
+      vscode.Uri.joinPath(this._extensionUri, 'dist', 'sidebar.css')
     );
 
     return `<!DOCTYPE html>

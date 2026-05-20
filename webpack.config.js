@@ -119,4 +119,33 @@ const historyWebviewConfig = {
   devtool: 'nosources-source-map',
 };
 
-module.exports = [extensionConfig, chatWebviewConfig, settingsWebviewConfig, historyWebviewConfig];
+/** @type {import('webpack').Configuration} */
+const sidebarWebviewConfig = {
+  target: 'web',
+  mode: 'none',
+  entry: './src/webviews/sidebar.ts',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'sidebar.js',
+  },
+  plugins: [new MiniCssExtractPlugin({ filename: 'sidebar.css' })],
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: [{ loader: 'ts-loader' }],
+      },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
+      },
+    ],
+  },
+  devtool: 'nosources-source-map',
+};
+
+module.exports = [extensionConfig, chatWebviewConfig, settingsWebviewConfig, historyWebviewConfig, sidebarWebviewConfig];

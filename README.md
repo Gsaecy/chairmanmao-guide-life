@@ -4,7 +4,18 @@
 
 | VS Code | Version | License |
 |---------|---------|--------|
-| >=1.85.0 | 0.1.9 | MIT |
+| >=1.85.0 | 0.2.0 | MIT |
+
+---
+
+## What's New in v0.2.0
+
+- ✨ **Redesigned Sidebar Navigation** - Clean status display (extension name + style mode + API readiness) with three action buttons (New Chat / History / Settings), welcome icon, and step-by-step usage guide
+- 🎨 **Full Theme Adaptation** - History & Settings panels now use VSCode CSS variables; no more hardcoded red/white colors; all input fields have subtle shadows `0 1px 3px rgba()`
+- ⚡ **Independent Chat Panel** - New sessions open directly in editor panel; no more sidebar UI flickering or lost session titles
+- 🔧 **Streaming Performance** - 100ms RAF debounce prevents character-by-character rendering, giving smooth text flow
+- 📋 **Improved History Panel** - Enhanced color contrast, card hover shadows, Delete button with confirmation dialog
+- 🧹 **Code Cleanup** - Removed sidebar-specific logic from chat panel; sidebar now uses dedicated `sidebar.ts` webview
 
 ---
 
@@ -34,29 +45,39 @@ Mao's Thought Guidance is a VS Code extension that uses Mao's Selected Works cor
 ## Features
 
 ### Intelligent Conversation
-- Six-phase progressive questioning: Understanding -> Contradiction -> Conditions -> Strategy -> Tactics -> Reflection
+- Six-phase progressive questioning: Understanding → Contradiction → Conditions → Strategy → Tactics → Reflection
 - Multi-turn dialogue, going deeper without rushing to conclusions
 - Concise, powerful replies that hit the core
 
+### Intuitive Sidebar Navigation
+- **Status Bar**: Extension name + current style mode + API readiness indicator
+- **Quick Actions**: New Chat | History | Settings (3 buttons)
+- **Welcome Guide**: Problem statement and step-by-step usage instructions
+- **Independent Editor Panels**: Each chat session opens in its own panel for clarity
+
 ### Theme-adaptive UI
 - Clean design that follows VS Code system theme (dark/light)
-- Activity bar sidebar + independent editor panel
-- Sidebar shows usage guide by default
+- All input fields include subtle shadows (`0 1px 3px rgba(0,0,0,0.08)`)
+- Activity bar sidebar with streamlined navigation
+- Settings & History panels automatically styled
 
 ### Three Style Modes
 - **Mao Originalist** - Focus on Mao's classic texts
-- **Ye Zinong / Ding Yuanying** - Focus on methodology and logic
-- **Balanced Fusion** - Best of both
+- **Ye Zinong / Ding Yuanying** - Focus on methodology and logic  
+- **Balanced Fusion** - Best of both (recommended)
 
 ### Flexible Configuration
 - Default support for **DeepSeek** API, compatible with all OpenAI-format APIs
 - Optional web search (SerpAPI / Bing / AnySearch)
+- Configurable temperature, max tokens, and model selection
 
 ### Report Export
 - One-click export of analysis reports as **Markdown**
 
 ### History Management
-- Auto-saves all conversations, view and delete history records
+- Auto-saves all conversations with timestamps
+- View, search, and delete history records with smooth UI
+- Phase tracking for each conversation
 
 ---
 
@@ -64,13 +85,20 @@ Mao's Thought Guidance is a VS Code extension that uses Mao's Selected Works cor
 
 ### 1. Install
 ```bash
-code --install-extension ChairmanMao-guide-life-0.1.9.vsix
+code --install-extension ChairmanMao-guide-life-0.2.0.vsix
 ```
 
 ### 2. Configure API
-1. Click gear icon in chat panel to open Settings
-2. Fill in: API Key from [platform.deepseek.com](https://platform.deepseek.com)
-3. Save and start chatting
+1. Look for "Mao's Thought" in the VS Code Activity Bar (sidebar)
+2. Click the ⚙ **Settings** button
+3. Fill in your API Key from [platform.deepseek.com](https://platform.deepseek.com)
+4. Click **Save Settings** and you're ready to start
+
+### 3. Start Chatting
+1. Click **+ New Chat** in the sidebar
+2. Enter your situation/problem (this becomes the chat title)
+3. Press Enter and describe your situation in detail
+4. The AI will guide you through six analytical phases
 
 ---
 
@@ -78,13 +106,13 @@ code --install-extension ChairmanMao-guide-life-0.1.9.vsix
 
 | Key | Description | Default |
 |-----|-------------|---------|
-| maoxuan.apiKey | API Key | - |
-| maoxuan.apiBaseUrl | API Base URL | https://api.deepseek.com |
-| maoxuan.model | Model name | deepseek-chat |
-| maoxuan.temperature | Temperature (0-2) | 0.7 |
-| maoxuan.maxTokens | Max output tokens | 4096 |
-| maoxuan.style | Style (maoxuan/yedinying/balanced) | balanced |
-| maoxuan.searchEngine | Search engine | serpapi |
+| API Base URL | API endpoint | https://api.deepseek.com |
+| API Key | Authentication token | - |
+| Model | Model name | deepseek-chat |
+| Temperature | Creativity (0-2) | 0.7 |
+| Max Tokens | Response length | 4096 |
+| Style | Analysis mode | balanced |
+| Web Search | Enable web queries | disabled |
 
 ---
 
@@ -92,11 +120,24 @@ code --install-extension ChairmanMao-guide-life-0.1.9.vsix
 
 ```bash
 git clone https://github.com/Gsaecy/ChairmanMao-guide-life.git
-cd ChairmanMao-guide-life
+cd extension
 npm install
-npm run vscode:prepublish
+npm run compile
 npm run package
 ```
+
+---
+
+## Support
+
+- 📖 [GitHub Issues](https://github.com/Gsaecy/ChairmanMao-guide-life/issues)
+- 💬 Feedback welcomed
+
+---
+
+## License
+
+MIT
 
 ---
 

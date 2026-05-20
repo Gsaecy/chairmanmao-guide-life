@@ -11,15 +11,15 @@ import './globals.css';
 
   function renderApp() {
     app.innerHTML = `
-      <div class="p-4 max-w-2xl mx-auto">
-        <div class="flex items-center justify-between mb-4 border-b border-red-200 pb-2">
-          <h1 class="text-lg font-bold text-red-800">📋 历史对话记录</h1>
-          <button id="btnRefresh" class="text-xs bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
-            刷新
+      <div class="p-4 max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-4 pb-3" style="border-bottom: 1px solid var(--vscode-sideBar-border);">
+          <h1 class="text-lg font-bold" style="color: var(--vscode-editor-foreground);">📋 历史对话记录</h1>
+          <button id="btnRefresh" class="text-xs px-3 py-1.5 rounded font-medium transition-colors" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            🔄 刷新
           </button>
         </div>
         <div id="sessionsList" class="space-y-2">
-          <p class="text-sm text-gray-400 text-center py-8">加载中...</p>
+          <p class="text-sm text-center py-8" style="color: var(--vscode-descriptionForeground);">加载中...</p>
         </div>
       </div>
     `;
@@ -37,8 +37,8 @@ import './globals.css';
       container.innerHTML = `
         <div class="text-center py-12">
           <div class="text-3xl mb-2">📭</div>
-          <p class="text-sm text-gray-400">暂无历史对话</p>
-          <p class="text-xs text-gray-300 mt-1">开始一个新的对话吧</p>
+          <p class="text-sm" style="color: var(--vscode-descriptionForeground);">暂无历史对话</p>
+          <p class="text-xs mt-1" style="color: var(--vscode-descriptionForeground); opacity: 0.7;">开始一个新的对话吧</p>
         </div>
       `;
       return;
@@ -47,28 +47,28 @@ import './globals.css';
     container.innerHTML = sessions
       .map(
         (session) => `
-      <div class="bg-white border border-red-200 rounded-lg p-3 session-card"
+      <div class="rounded-lg p-3 session-card transition-all hover:shadow-md" style="background: var(--vscode-sideBar-background); border: 1px solid var(--vscode-sideBar-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);"
            data-session-id="${escapeHtml(session.id)}">
         <div class="flex justify-between items-start">
           <div class="flex-1 min-w-0">
-            <h3 class="text-sm font-bold text-red-800 mb-1 truncate">${escapeHtml(session.title || '未命名对话')}</h3>
-            <p class="text-xs text-gray-500">
+            <h3 class="text-sm font-semibold mb-1 truncate" style="color: var(--vscode-editor-foreground);">${escapeHtml(session.title || '未命名对话')}</h3>
+            <p class="text-xs" style="color: var(--vscode-descriptionForeground);">
               创建：${escapeHtml(formatDate(session.createdAt))} 
               ${session.updatedAt ? `· 更新：${escapeHtml(formatDate(session.updatedAt))}` : ''}
             </p>
-            <p class="text-xs text-gray-400 mt-1">
+            <p class="text-xs mt-1" style="color: var(--vscode-descriptionForeground); opacity: 0.8;">
               阶段：${escapeHtml(getPhaseName(session.currentPhase))} · ${session.messageCount || 0} 条消息
             </p>
           </div>
           <div class="flex flex-col gap-1.5 flex-shrink-0 ml-2">
-            <button class="view-btn text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-medium transition-colors whitespace-nowrap"
+            <button class="view-btn text-xs px-3 py-1.5 rounded font-medium transition-colors whitespace-nowrap" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground); box-shadow: 0 1px 3px rgba(0,0,0,0.12);"
                     data-session-id="${escapeHtml(session.id)}">
               查看对话
             </button>
-            <button class="delete-btn text-xs text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded whitespace-nowrap"
+            <button class="delete-btn text-xs px-2 py-1 rounded transition-colors whitespace-nowrap" style="background: transparent; color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-sideBar-border);"
                     data-session-id="${escapeHtml(session.id)}"
                     title="删除该记录">
-              清除该记录
+              🗑 删除
             </button>
           </div>
         </div>
@@ -105,12 +105,12 @@ import './globals.css';
     overlay.className = 'fixed inset-0 flex items-center justify-center z-50';
     overlay.style.cssText = 'background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);';
     overlay.innerHTML = `
-      <div class="bg-white rounded-xl w-[340px] p-6 shadow-xl border border-red-100">
-        <h3 class="text-base font-semibold mb-3 text-red-600">确认删除</h3>
-        <p class="text-sm text-gray-600 mb-5">确定要删除这个对话吗？此操作不可恢复。</p>
+      <div class="rounded-lg w-[340px] p-6 shadow-xl" style="background: var(--vscode-editorWidget-background); border: 1px solid var(--vscode-editorWidget-border);">
+        <h3 class="text-base font-semibold mb-3" style="color: var(--vscode-editor-foreground);">确认删除</h3>
+        <p class="text-sm mb-5" style="color: var(--vscode-descriptionForeground);">确定要删除这个对话吗？此操作不可恢复。</p>
         <div class="flex justify-end gap-2">
-          <button id="cancelDelete" class="px-4 py-2 text-sm rounded bg-gray-100 hover:bg-gray-200 text-gray-600">取消</button>
-          <button id="confirmDelete" class="px-4 py-2 text-sm rounded bg-red-600 hover:bg-red-700 text-white font-medium">确认删除</button>
+          <button id="cancelDelete" class="px-4 py-2 text-sm rounded transition-colors" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);">取消</button>
+          <button id="confirmDelete" class="px-4 py-2 text-sm rounded font-medium transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">确认删除</button>
         </div>
       </div>
     `;

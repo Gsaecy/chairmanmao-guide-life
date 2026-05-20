@@ -77,7 +77,7 @@ export class ChatPanel {
   }
 
   public newSession(): void {
-    // Webview 会弹出标题输入
+    // 弹出新建会话对话框，创建会话后即显示输入框
     this._panel.webview.postMessage({ command: 'promptNewSession' });
   }
 
@@ -106,7 +106,6 @@ export class ChatPanel {
 
           case 'sendMessage':
             try {
-              // 通知 webview 开始流式响应
               this._panel.webview.postMessage({ command: 'streamStart' });
               await this._dialogue.sendMessage(message.payload.content);
               this._panel.webview.postMessage({ command: 'streamEnd' });
@@ -133,7 +132,6 @@ export class ChatPanel {
               const session = this._dialogue.getCurrentSession();
               if (session) {
                 const filePath = this._storage.saveReport(session.id, report, 'md');
-                // 在 VS Code 中打开报告文件
                 const doc = await vscode.workspace.openTextDocument(filePath);
                 await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside });
               }
@@ -144,10 +142,6 @@ export class ChatPanel {
             } catch (err) {
               vscode.window.showErrorMessage(`生成报告失败: ${err}`);
             }
-            break;
-
-          case 'openSettings':
-            vscode.commands.executeCommand('maoxuan-guidance.openSettings');
             break;
         }
       },

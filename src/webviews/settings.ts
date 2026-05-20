@@ -13,25 +13,25 @@ import './globals.css';
   function renderApp() {
     app.innerHTML = `
       <div class="p-4 max-w-lg mx-auto">
-        <h1 class="text-lg font-bold text-red-800 mb-4 border-b border-red-200 pb-2">⚙ 毛选思想指导 — 设置</h1>
+        <h1 class="text-lg font-bold mb-4 pb-2" style="border-bottom: 1px solid var(--vscode-sideBar-border); color: var(--vscode-editor-foreground);">⚙ 毛选思想指导 — 设置</h1>
 
         <!-- API 设置 -->
         <section class="mb-6">
-          <h2 class="text-sm font-bold text-red-700 mb-2">🔑 API 设置</h2>
+          <h2 class="text-sm font-bold mb-2" style="color: var(--vscode-editor-foreground);">🔑 API 设置</h2>
           
-          <label class="block text-xs text-gray-600 mb-1">API 服务地址</label>
-          <input id="apiBaseUrl" type="text" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-3 focus:outline-none focus:border-red-500" 
+          <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">API 服务地址</label>
+          <input id="apiBaseUrl" type="text" class="w-full border rounded px-3 py-1.5 text-sm mb-3 focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" 
             placeholder="https://api.deepseek.com" />
 
-          <label class="block text-xs text-gray-600 mb-1">API Key</label>
-          <input id="apiKey" type="password" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-3 focus:outline-none focus:border-red-500" 
+          <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">API Key</label>
+          <input id="apiKey" type="password" class="w-full border rounded px-3 py-1.5 text-sm mb-3 focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" 
             placeholder="sk-..." />
 
-          <label class="block text-xs text-gray-600 mb-1">模型名称</label>
-          <input id="model" type="text" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-4 focus:outline-none focus:border-red-500" 
+          <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">模型名称</label>
+          <input id="model" type="text" class="w-full border rounded px-3 py-1.5 text-sm mb-4 focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" 
             placeholder="deepseek-chat" />
 
-          <button id="btnTest" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-1.5 rounded text-sm w-full">
+          <button id="btnTest" class="px-4 py-1.5 rounded text-sm w-full font-medium transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground); box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
             测试连接
           </button>
           <div id="testResult" class="hidden text-xs mt-2 p-2 rounded"></div>
@@ -39,44 +39,44 @@ import './globals.css';
 
         <!-- 对话设置 -->
         <section class="mb-6">
-          <h2 class="text-sm font-bold text-red-700 mb-2">💬 对话设置</h2>
+          <h2 class="text-sm font-bold mb-2" style="color: var(--vscode-editor-foreground);">💬 对话设置</h2>
 
-          <label class="block text-xs text-gray-600 mb-1">Temperature（0-2，建议 0.7）</label>
+          <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">Temperature（0-2，建议 0.7）</label>
           <input id="temperature" type="range" class="w-full mb-3" min="0" max="2" step="0.1" value="0.7" />
-          <div class="text-xs text-gray-500 mb-3">
+          <div class="text-xs mb-3" style="color: var(--vscode-descriptionForeground);">
             当前值：<span id="tempValue">0.7</span>
           </div>
 
-          <label class="block text-xs text-gray-600 mb-1">最大 Token 数</label>
-          <input id="maxTokens" type="number" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-4 focus:outline-none focus:border-red-500" 
+          <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">最大 Token 数</label>
+          <input id="maxTokens" type="number" class="w-full border rounded px-3 py-1.5 text-sm mb-4 focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" 
             placeholder="4096" />
         </section>
 
         <!-- 风格偏好 -->
         <section class="mb-6">
-          <h2 class="text-sm font-bold text-red-700 mb-2">🎨 风格偏好</h2>
-          <select id="style" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-2 focus:outline-none focus:border-red-500">
+          <h2 class="text-sm font-bold mb-2" style="color: var(--vscode-editor-foreground);">🎨 风格偏好</h2>
+          <select id="style" class="w-full border rounded px-3 py-1.5 text-sm mb-2 focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
             <option value="balanced">平衡融合（推荐）</option>
             <option value="maoxuan">偏重毛选原教旨主义</option>
             <option value="yedinying">偏重叶子农/丁元英方法论</option>
           </select>
-          <p id="styleDesc" class="text-xs text-gray-500 mb-3">
+          <p id="styleDesc" class="text-xs mb-3" style="color: var(--vscode-descriptionForeground);">
             自然地融合毛选思想与叶子农/丁元英方法论。在分析矛盾格局时多用毛选框架；在分析个人条件时多用"见路不走"框架。
           </p>
         </section>
 
         <!-- 联网搜索设置 -->
         <section class="mb-6">
-          <h2 class="text-sm font-bold text-red-700 mb-2">🌐 联网搜索（可选）</h2>
+          <h2 class="text-sm font-bold mb-2" style="color: var(--vscode-editor-foreground);">🌐 联网搜索（可选）</h2>
 
           <label class="flex items-center gap-2 mb-3">
             <input id="webSearchEnabled" type="checkbox" class="rounded" />
-            <span class="text-xs text-gray-600">启用联网搜索功能</span>
+            <span class="text-xs" style="color: var(--vscode-descriptionForeground);">启用联网搜索功能</span>
           </label>
 
           <div id="searchSettings" class="hidden">
-            <label class="block text-xs text-gray-600 mb-1">搜索引擎（可自定义输入）</label>
-            <input id="searchEngine" type="text" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-3 focus:outline-none focus:border-red-500" 
+            <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">搜索引擎（可自定义输入）</label>
+            <input id="searchEngine" type="text" class="w-full border rounded px-3 py-1.5 text-sm mb-3 focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" 
               placeholder="serpapi / bing / anysearch / 自定义..." list="searchEngineList" />
             <datalist id="searchEngineList">
               <option value="serpapi">
@@ -84,26 +84,26 @@ import './globals.css';
               <option value="anysearch">
             </datalist>
 
-            <label class="block text-xs text-gray-600 mb-1">搜索 API Key</label>
-            <input id="searchApiKey" type="password" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm mb-4 focus:outline-none focus:border-red-500" 
+            <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">搜索 API Key</label>
+            <input id="searchApiKey" type="password" class="w-full border rounded px-3 py-1.5 text-sm mb-4 focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" 
               placeholder="搜索 API Key" />
           </div>
         </section>
 
         <!-- 存储设置 -->
         <section class="mb-6">
-          <h2 class="text-sm font-bold text-red-700 mb-2">📁 存储路径（可选）</h2>
-          <input id="storagePath" type="text" class="w-full border border-red-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-red-500" 
+          <h2 class="text-sm font-bold mb-2" style="color: var(--vscode-editor-foreground);">📁 存储路径（可选）</h2>
+          <input id="storagePath" type="text" class="w-full border rounded px-3 py-1.5 text-sm focus:outline-none" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border); box-shadow: 0 1px 3px rgba(0,0,0,0.08);" 
             placeholder="留空使用默认路径" />
         </section>
 
         <!-- 操作按钮 -->
-        <div class="flex gap-3 pt-4 border-t border-red-200">
-          <button id="btnSave" class="flex-1 bg-red-700 hover:bg-red-800 text-white px-4 py-2 rounded text-sm font-bold">
-            保存设置
+        <div class="flex gap-3 pt-4" style="border-top: 1px solid var(--vscode-sideBar-border);">
+          <button id="btnSave" class="flex-1 px-4 py-2 rounded text-sm font-medium transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground); box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
+            💾 保存设置
           </button>
-          <button id="btnReset" class="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded text-sm">
-            恢复默认
+          <button id="btnReset" class="px-4 py-2 rounded text-sm transition-colors" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);">
+            ↻ 恢复默认
           </button>
         </div>
       </div>
