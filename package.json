@@ -1,9 +1,9 @@
 {
   "name": "ChairmanMao-guide-life",
   "displayName": "毛选思想指导",
-  "description": "AI guidance powered by Mao's Selected Works — analyze problems with pragmatic, clear-headed methodology",
-  "version": "0.1.6",
-  "publisher": "honor-world",
+  "description": "AI guidance powered by Mao's Selected Works �?analyze problems with pragmatic, clear-headed methodology",
+  "version": "0.1.7",
+  "publisher": "Gsaecy",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -16,8 +16,8 @@
     "Other"
   ],
   "keywords": [
-    "毛选",
-    "毛泽东",
+    "毛�?,
+    "毛泽�?,
     "思想指导",
     "决策"
   ],
@@ -112,7 +112,7 @@
         "maoxuan.apiKey": {
           "type": "string",
           "default": "",
-          "description": "API Key (DeepSeek 或其他 OpenAI 兼容 API)"
+          "description": "API Key (DeepSeek 或其�?OpenAI 兼容 API)"
         },
         "maoxuan.apiBaseUrl": {
           "type": "string",
@@ -122,17 +122,17 @@
         "maoxuan.model": {
           "type": "string",
           "default": "deepseek-chat",
-          "description": "使用的模型名称"
+          "description": "使用的模型名�?
         },
         "maoxuan.storagePath": {
           "type": "string",
           "default": "",
-          "description": "对话存储路径（留空使用默认 ~/.maoxuan-guidance）"
+          "description": "对话存储路径（留空使用默�?~/.maoxuan-guidance�?
         },
         "maoxuan.webSearchEnabled": {
           "type": "boolean",
           "default": true,
-          "description": "启用联网搜索功能（需配置搜索引擎 API）"
+          "description": "启用联网搜索功能（需配置搜索引擎 API�?
         },
         "maoxuan.searchApiKey": {
           "type": "string",
@@ -160,7 +160,7 @@
           "default": 4096,
           "minimum": 256,
           "maximum": 32768,
-          "description": "最大输出 Token 数"
+          "description": "最大输�?Token �?
         },
         "maoxuan.style": {
           "type": "string",
@@ -172,7 +172,7 @@
           ],
           "enumDescriptions": [
             "偏重毛选原教旨主义风格",
-            "偏重叶子农/丁元英方法论风格",
+            "偏重叶子�?丁元英方法论风格",
             "平衡融合"
           ],
           "description": "对话风格偏好"
