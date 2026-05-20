@@ -37,8 +37,8 @@ export class DialogueManager {
   /**
    * 开始新对话
    */
-  startNewSession(title: string): SessionData {
-    this.currentSession = this.storage.createSession(title);
+  startNewSession(title: string, style?: 'maoxuan' | 'yedinying' | 'balanced'): SessionData {
+    this.currentSession = this.storage.createSession(title, style);
     this.userMessageQueue = [];
     this.notifyPhaseChange('understanding');
     return this.currentSession;
@@ -76,6 +76,9 @@ export class DialogueManager {
       throw new Error('请先在设置中配置 API Key');
     }
 
+    // 使用对话绑定的风格（而非全局设置），若未绑定则用全局设置
+    const effectiveConfig = { ...config, style: this.currentSession.style || config.style };
+
     // 添加用户消息到会话
     const userMessage: ChatMessage = {
       id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
@@ -102,7 +105,7 @@ export class DialogueManager {
       let fullResponse = '';
 
       this.abortController = streamChat(
-        config,
+        effectiveConfig,
         messages.filter(m => m.role !== 'system'), // system prompt 由 api.ts 注入
         currentPhase,
         (chunk: string) => {

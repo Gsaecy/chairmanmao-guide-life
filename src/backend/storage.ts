@@ -62,7 +62,7 @@ export class StorageManager {
   /**
    * 创建新对话会话
    */
-  createSession(title: string): SessionData {
+  createSession(title: string, style?: 'maoxuan' | 'yedinying' | 'balanced'): SessionData {
     const session: SessionData = {
       id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
       title,
@@ -70,6 +70,7 @@ export class StorageManager {
       updatedAt: Date.now(),
       messages: [],
       currentPhase: 'understanding',
+      style: style || this.getConfig().style,
     };
     this.saveSession(session);
     return session;

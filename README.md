@@ -4,7 +4,7 @@
 
 | VS Code | Version | License |
 |---------|---------|--------|
-| >=1.85.0 | 0.1.8 | MIT |
+| >=1.85.0 | 0.1.9 | MIT |
 
 ---
 
@@ -64,7 +64,7 @@ Mao's Thought Guidance is a VS Code extension that uses Mao's Selected Works cor
 
 ### 1. Install
 ```bash
-code --install-extension ChairmanMao-guide-life-0.1.8.vsix
+code --install-extension ChairmanMao-guide-life-0.1.9.vsix
 ```
 
 ### 2. Configure API
@@ -101,6 +101,12 @@ npm run package
 ---
 
 ## Changelog
+
+### v0.1.9
+- Style binding: select style (Mao/Ye/Balanced) when creating session, persists per session
+- Sidebar close button: return to welcome page with one click
+- History buttons: text buttons replacing icons for consistency
+- Welcome page: custom image support (media/welcome-icon.png)
 
 ### v0.1.8
 - Auto-focus input box after creating new session, display session title in header

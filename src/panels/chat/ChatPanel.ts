@@ -94,7 +94,7 @@ export class ChatPanel {
         switch (message.command) {
           case 'createSession':
             try {
-              const session = this._dialogue.startNewSession(message.payload.title);
+              const session = this._dialogue.startNewSession(message.payload.title, message.payload.style);
               this._panel.webview.postMessage({
                 command: 'sessionCreated',
                 payload: session,
@@ -132,7 +132,10 @@ export class ChatPanel {
               const report = this._dialogue.generateReport();
               const session = this._dialogue.getCurrentSession();
               if (session) {
-                this._storage.saveReport(session.id, report, 'md');
+                const filePath = this._storage.saveReport(session.id, report, 'md');
+                // 在 VS Code 中打开报告文件
+                const doc = await vscode.workspace.openTextDocument(filePath);
+                await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside });
               }
               this._panel.webview.postMessage({
                 command: 'reportReady',

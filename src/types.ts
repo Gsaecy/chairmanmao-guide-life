@@ -35,6 +35,7 @@ export interface SessionData {
   updatedAt: number;
   messages: ChatMessage[];
   currentPhase: DialoguePhase;
+  style?: 'maoxuan' | 'yedinying' | 'balanced';
   summary?: string;
 }
 

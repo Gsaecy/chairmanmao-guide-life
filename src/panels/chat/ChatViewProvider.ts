@@ -36,11 +36,15 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     this._setMessageListener(webviewView);
 
     // 显示引导内容
+    const welcomeIconUri = webviewView.webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, 'media', 'welcome-icon.png')
+    );
     webviewView.webview.postMessage({
       command: 'showWelcome',
       payload: {
         title: '没有调查，就没有发言权',
         subtitle: '告诉我你面临的问题，让我们一起用实事求是的方法来分析',
+        iconUri: welcomeIconUri.toString(),
         phases: [
           { name: '全面了解', icon: '🔍', desc: '说清你的情况和条件' },
           { name: '矛盾分析', icon: '⚡', desc: '抓主要矛盾' },
@@ -58,7 +62,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       switch (message.command) {
         case 'createSession': {
           try {
-            const session = this._dialogue.startNewSession(message.payload.title);
+            const session = this._dialogue.startNewSession(message.payload.title, message.payload.style);
             webviewView.webview.postMessage({
               command: 'sessionCreated',
               payload: session,
@@ -97,7 +101,9 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
             const report = this._dialogue.generateReport();
             const session = this._dialogue.getCurrentSession();
             if (session) {
-              this._storage.saveReport(session.id, report, 'md');
+              const filePath = this._storage.saveReport(session.id, report, 'md');
+              const doc = await vscode.workspace.openTextDocument(filePath);
+              await vscode.window.showTextDocument(doc, { viewColumn: vscode.ViewColumn.Beside });
             }
             webviewView.webview.postMessage({
               command: 'reportReady',

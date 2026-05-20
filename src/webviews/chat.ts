@@ -10,20 +10,28 @@ import './globals.css';
   let currentPhase = 'understanding';
   let sessionLoaded = false;
   let isSidebar = false; // 是否侧边栏模式
+  let currentStyle: string = 'balanced'; // 当前对话风格
 
-  // 流式渲染防抖
+  // 流式渲染防抖——50ms节流+RAF合并，避免逐字跳动
   let rafPending = false;
   let rafId: number | null = null;
+  let lastRenderTime = 0;
+  const MIN_RENDER_INTERVAL = 60; // 最快60ms刷新一次，避免逐字跳动
 
   function scheduleStreamRender() {
+    const now = performance.now();
     if (rafPending) return;
     rafPending = true;
     if (rafId !== null) cancelAnimationFrame(rafId);
+    // 如果距上次渲染不足 MIN_RENDER_INTERVAL，则等待；否则立即 RAF 渲染
+    const delay = Math.max(0, MIN_RENDER_INTERVAL - (now - lastRenderTime));
     rafId = requestAnimationFrame(() => {
       rafPending = false;
       rafId = null;
       const bubble = document.querySelector('[data-is-stream="true"]') as HTMLElement;
       if (!bubble) return;
+      if (performance.now() - lastRenderTime < MIN_RENDER_INTERVAL) return; // 二次确认不超速
+      lastRenderTime = performance.now();
       const clean = filterGarbled(streamingBuffer);
       bubble.innerHTML = formatContent(clean);
       const container = getEl('messagesContainer')!;
@@ -41,14 +49,16 @@ import './globals.css';
         <div class="flex-shrink-0 px-4 py-2 flex items-center justify-between" style="background: var(--vscode-sideBar-background); border-bottom: 1px solid var(--vscode-sideBar-border);">
           <div class="flex items-center gap-2">
             <span class="text-sm font-semibold" style="color: var(--vscode-editor-foreground);">毛选思想指导</span>
-            <span id="phaseLabel" class="text-[10px] px-2 py-0.5 rounded-full" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);">就绪</span>
+            <span id="styleLabel" class="text-[10px] px-2 py-0.5 rounded-full" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);">平衡融合</span>
+            <span id="phaseLabel" class="text-[10px] px-2 py-0.5 rounded-full" style="background: var(--vscode-inputValidation-infoBackground); color: var(--vscode-inputValidation-infoForeground);">就绪</span>
           </div>
           <div class="flex items-center gap-2">
             <button id="btnNewSession" class="text-xs px-3 py-1.5 rounded transition-colors font-medium" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">
               ＋ 新建对话
             </button>
-            <button id="btnHistory" class="text-xs px-2 py-1 rounded transition-colors" style="background: transparent; color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-sideBar-border);" title="对话历史">📋</button>
-            <button id="btnSettings" class="text-xs px-2 py-1 rounded transition-colors" style="background: transparent; color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-sideBar-border);" title="设置">⚙</button>
+            <button id="btnCloseSession" class="hidden text-xs px-3 py-1.5 rounded transition-colors" style="background: var(--vscode-button-secondaryBackground); color: var(--vscode-button-secondaryForeground);" title="关闭当前对话">关闭对话</button>
+            <button id="btnHistory" class="text-xs px-3 py-1.5 rounded transition-colors" style="background: transparent; color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-sideBar-border);">历史记录</button>
+            <button id="btnSettings" class="text-xs px-3 py-1.5 rounded transition-colors" style="background: transparent; color: var(--vscode-descriptionForeground); border: 1px solid var(--vscode-sideBar-border);">设置</button>
           </div>
         </div>
 
@@ -141,10 +151,18 @@ import './globals.css';
     }
   }
 
+  function updateInputFocus() {
+    setTimeout(() => {
+      const inputBox = getEl('inputBox') as HTMLTextAreaElement;
+      if (inputBox && isSidebar) inputBox.focus();
+    }, 150);
+  }
+
   function bindEvents() {
     setEl('btnSend', 'click', handleSend);
     setEl('btnAbort', 'click', handleAbort);
     setEl('btnNewSession', 'click', promptNewSession);
+    setEl('btnCloseSession', 'click', closeSession);
     setEl('btnSettings', 'click', () => vscode.postMessage({ command: 'openSettings' }));
     setEl('btnHistory', 'click', () => vscode.postMessage({ command: 'openHistory' }));
     setEl('btnAdvance', 'click', () => vscode.postMessage({ command: 'advancePhase' }));
@@ -178,7 +196,9 @@ import './globals.css';
 
     if (!sessionLoaded) {
       const title = content.length > 30 ? content.substring(0, 30) + '...' : content;
-      vscode.postMessage({ command: 'createSession', payload: { title } });
+      currentStyle = 'balanced';
+      updateStyleLabel(currentStyle);
+      vscode.postMessage({ command: 'createSession', payload: { title, style: currentStyle } });
       sessionLoaded = true;
     }
 
@@ -323,6 +343,22 @@ import './globals.css';
     }
   }
 
+  function updateStyleLabel(style: string) {
+    currentStyle = style;
+    const styleLabel = getEl('styleLabel');
+    if (!styleLabel) return;
+    const map: Record<string, string> = {
+      maoxuan: '毛选风格',
+      yedinying: '叶丁风格',
+      balanced: '平衡融合',
+    };
+    styleLabel.textContent = map[style] || style;
+    // session 创建后 styleLabel 显示标题，需要区分
+    if (sessionLoaded) {
+      styleLabel.textContent = map[style] || style;
+    }
+  }
+
   // ------------ Message Handling ------------
   window.addEventListener('message', (event) => {
     const message = event.data;
@@ -334,11 +370,15 @@ import './globals.css';
 
       case 'sessionCreated':
         sessionLoaded = true;
+        currentStyle = message.payload.style || 'balanced';
+        updateStyleLabel(currentStyle);
         vscode.setState({ sessionId: message.payload.id });
         break;
 
       case 'loadSession':
         sessionLoaded = true;
+        currentStyle = message.payload.style || 'balanced';
+        updateStyleLabel(currentStyle);
         vscode.setState({ sessionId: message.payload.id });
         currentPhase = message.payload.currentPhase;
         updatePhase(currentPhase, '');
@@ -350,15 +390,19 @@ import './globals.css';
         isSidebar = true;
         toggleSidebarMode();
         {
+          const iconUri = message.payload.iconUri || '';
           const placeholder = getEl('placeholderMsg');
           if (placeholder) {
             const phases = message.payload.phases || [];
             const phaseItems = phases.map((p: any) => 
               `<span class="inline-flex items-center gap-1 text-xs" style="color: var(--vscode-descriptionForeground);"><span>${p.icon}</span>${p.name}</span>`
             ).join('<span style="color: var(--vscode-input-border);"> → </span>');
+            const iconHtml = iconUri
+              ? `<img src="${iconUri}" alt="★" style="width:48px; height:48px; object-fit:contain; border-radius:50%;" />`
+              : `<span class="text-xl">★</span>`;
             placeholder.innerHTML = `
               <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-3" style="background: var(--vscode-sideBar-background);">
-                <span class="text-xl">★</span>
+                ${iconHtml}
               </div>
               <p class="text-base font-semibold mb-1" style="color: var(--vscode-editor-foreground);">${message.payload.title}</p>
               <p class="text-sm mb-4" style="color: var(--vscode-descriptionForeground);">${message.payload.subtitle}</p>
@@ -366,6 +410,8 @@ import './globals.css';
             `;
           }
         }
+        // 侧边栏模式下，点击新建话题按钮后自动聚焦输入框
+        updateInputFocus();
         break;
 
       case 'streamStart':
@@ -440,10 +486,31 @@ import './globals.css';
     overlay.className = 'fixed inset-0 flex items-center justify-center z-50';
     overlay.style.cssText = 'background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);';
     overlay.innerHTML = `
-      <div class="rounded-xl w-[380px] p-6 shadow-lg" style="background: var(--vscode-editorWidget-background); border: 1px solid var(--vscode-editorWidget-border);">
+      <div class="rounded-xl w-[400px] p-6 shadow-lg" style="background: var(--vscode-editorWidget-background); border: 1px solid var(--vscode-editorWidget-border);">
         <h3 class="text-base font-semibold mb-4" style="color: var(--vscode-editor-foreground);">新建对话</h3>
         <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">对话标题</label>
         <input id="newTitleInput" type="text" class="w-full border rounded px-3 py-2 text-sm focus:outline-none mb-4" style="background: var(--vscode-input-background); color: var(--vscode-input-foreground); border-color: var(--vscode-input-border);" placeholder="输入对话标题..." />
+        <label class="block text-xs mb-1" style="color: var(--vscode-descriptionForeground);">对话风格（选择后本次对话不可更改）</label>
+        <div class="flex gap-2 mb-4">
+          <label class="flex-1">
+            <input type="radio" name="newStyle" value="balanced" checked class="hidden peer" />
+            <div class="border rounded-lg px-3 py-2 text-center text-xs cursor-pointer transition-colors peer-checked:border-2 peer-checked:font-bold" style="border-color: var(--vscode-input-border); color: var(--vscode-editor-foreground); background: var(--vscode-input-background);">
+              平衡融合<span class="block text-[10px] opacity-60">毛选+叶丁</span>
+            </div>
+          </label>
+          <label class="flex-1">
+            <input type="radio" name="newStyle" value="maoxuan" class="hidden peer" />
+            <div class="border rounded-lg px-3 py-2 text-center text-xs cursor-pointer transition-colors peer-checked:border-2 peer-checked:font-bold" style="border-color: var(--vscode-input-border); color: var(--vscode-editor-foreground); background: var(--vscode-input-background);">
+              毛选风格<span class="block text-[10px] opacity-60">原教旨主义</span>
+            </div>
+          </label>
+          <label class="flex-1">
+            <input type="radio" name="newStyle" value="yedinying" class="hidden peer" />
+            <div class="border rounded-lg px-3 py-2 text-center text-xs cursor-pointer transition-colors peer-checked:border-2 peer-checked:font-bold" style="border-color: var(--vscode-input-border); color: var(--vscode-editor-foreground); background: var(--vscode-input-background);">
+              叶丁风格<span class="block text-[10px] opacity-60">见路不走</span>
+            </div>
+          </label>
+        </div>
         <div class="flex justify-end gap-2">
           <button id="cancelNewSession" class="px-4 py-2 text-sm rounded transition-colors" style="background: transparent; color: var(--vscode-descriptionForeground);">取消</button>
           <button id="confirmNewSession" class="px-4 py-2 text-sm rounded font-medium transition-colors" style="background: var(--vscode-button-background); color: var(--vscode-button-foreground);">开始对话</button>
@@ -451,7 +518,6 @@ import './globals.css';
       </div>
     `;
     document.body.appendChild(overlay);
-    // 点击遮罩关闭
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 
     const input = overlay.querySelector('#newTitleInput') as HTMLInputElement;
@@ -461,11 +527,13 @@ import './globals.css';
     overlay.querySelector('#confirmNewSession')?.addEventListener('click', () => {
       const title = input.value.trim();
       if (title) {
+        const styleRadio = overlay.querySelector('input[name="newStyle"]:checked') as HTMLInputElement;
+        const selectedStyle = styleRadio?.value || 'balanced';
+        currentStyle = selectedStyle;
+        updateStyleLabel(selectedStyle);
         sessionLoaded = false;
-        // 更新标题
-        const phaseLabel = getEl('phaseLabel');
-        if (phaseLabel) phaseLabel.textContent = title.length > 20 ? title.substring(0, 20) + '…' : title;
-        // 重置消息区
+        const styleLabel = getEl('styleLabel');
+        if (styleLabel) styleLabel.textContent = title.length > 16 ? title.substring(0, 16) + '…' : title;
         const container = getEl('messagesContainer')!;
         container.innerHTML = `
           <div id="placeholderMsg" class="text-center py-14">
@@ -485,16 +553,14 @@ import './globals.css';
           </div>
         `;
         updatePhase('understanding', '第一阶段 · 全面了解');
-        vscode.postMessage({ command: 'createSession', payload: { title } });
+        vscode.postMessage({ command: 'createSession', payload: { title, style: selectedStyle } });
         overlay.remove();
-        // 自动聚焦输入框
         setTimeout(() => {
           const inputBox = getEl('inputBox') as HTMLTextAreaElement;
           if (inputBox && !isSidebar) inputBox.focus();
         }, 100);
       }
     });
-    // Enter 提交
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         (overlay.querySelector('#confirmNewSession') as HTMLButtonElement)?.click();
@@ -566,6 +632,39 @@ import './globals.css';
 
   function promptNewSession() {
     showNewSessionDialog();
+  }
+
+  function closeSession() {
+    // 重置状态，回到欢迎页面
+    sessionLoaded = false;
+    currentStyle = 'balanced';
+    updateStyleLabel('balanced');
+    const container = getEl('messagesContainer')!;
+    container.innerHTML = `
+      <div id="placeholderMsg" class="text-center py-16">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-3 overflow-hidden" style="background: var(--vscode-sideBar-background);">
+          <img id="welcomeIcon" src="" alt="★" style="width:36px; height:36px; object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"/>
+          <span id="welcomeStarFallback" style="display:none; font-size:28px;">★</span>
+        </div>
+        <p class="text-base font-semibold mb-1" style="color: var(--vscode-editor-foreground);">没有调查，就没有发言权</p>
+        <p class="text-sm" style="color: var(--vscode-descriptionForeground);">告诉我你面临的问题，我们一起用实事求是的方法来分析</p>
+      </div>
+      <div id="loadingIndicator" class="hidden flex justify-start">
+        <div class="border px-3 py-2 text-xs rounded" style="background: var(--vscode-sideBar-background); border-color: var(--vscode-sideBar-border); color: var(--vscode-descriptionForeground);">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background: var(--vscode-button-background);"></span>
+            思考中...
+          </span>
+        </div>
+      </div>
+    `;
+    const styleLabel = getEl('styleLabel');
+    if (styleLabel) styleLabel.textContent = '平衡融合';
+    const closeBtn = getEl('btnCloseSession');
+    if (closeBtn) closeBtn.classList.add('hidden');
+    const inputBox = getEl('inputBox') as HTMLTextAreaElement;
+    if (inputBox) inputBox.value = '';
+    vscode.setState({ sessionId: null });
   }
 
   function escapeHtml(str: string): string {

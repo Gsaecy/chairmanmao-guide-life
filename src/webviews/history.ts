@@ -93,10 +93,33 @@ import './globals.css';
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const sessionId = (btn as HTMLElement).getAttribute('data-session-id');
-        if (sessionId && confirm('确定要删除这个对话吗？此操作不可恢复。')) {
-          vscode.postMessage({ command: 'deleteSession', payload: { sessionId } });
+        if (sessionId) {
+          showDeleteConfirm(sessionId);
         }
       });
+    });
+  }
+
+  function showDeleteConfirm(sessionId: string) {
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 flex items-center justify-center z-50';
+    overlay.style.cssText = 'background: rgba(0,0,0,0.3); backdrop-filter: blur(4px);';
+    overlay.innerHTML = `
+      <div class="bg-white rounded-xl w-[340px] p-6 shadow-xl border border-red-100">
+        <h3 class="text-base font-semibold mb-3 text-red-600">确认删除</h3>
+        <p class="text-sm text-gray-600 mb-5">确定要删除这个对话吗？此操作不可恢复。</p>
+        <div class="flex justify-end gap-2">
+          <button id="cancelDelete" class="px-4 py-2 text-sm rounded bg-gray-100 hover:bg-gray-200 text-gray-600">取消</button>
+          <button id="confirmDelete" class="px-4 py-2 text-sm rounded bg-red-600 hover:bg-red-700 text-white font-medium">确认删除</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+    overlay.querySelector('#cancelDelete')?.addEventListener('click', () => overlay.remove());
+    overlay.querySelector('#confirmDelete')?.addEventListener('click', () => {
+      overlay.remove();
+      vscode.postMessage({ command: 'deleteSession', payload: { sessionId } });
     });
   }
 
