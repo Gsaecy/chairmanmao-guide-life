@@ -59,9 +59,8 @@ import './globals.css';
   }
 
   function loadIcon() {
-    const img = document.getElementById('welcomeIcon') as HTMLImageElement;
-    if (!img) return;
-    img.src = ''; // 由后端 postMessage 注入
+    // 图标将由后端通过 postMessage 的 setIcon 命令注入
+    // 无需在这里设置 src
   }
 
   function bindEvents() {

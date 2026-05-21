@@ -55,6 +55,10 @@ export function activate(context: vscode.ExtensionContext) {
     loadSession(context, sessionId);
   });
 
+  const openChatEditorCmd = vscode.commands.registerCommand('maoxuan-guidance.openChatEditor', () => {
+    chatPanel = createOrShowChatPanel(context);
+  });
+
   const exportReportCmd = vscode.commands.registerCommand('maoxuan-guidance.exportReport', async () => {
     if (!dialogueManager.getCurrentSession()) {
       vscode.window.showWarningMessage('没有活跃的对话会话，请先开始对话。');
@@ -74,6 +78,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     newSessionCmd,
     openChatCmd,
+    openChatEditorCmd,
     openSettingsCmd,
     openHistoryCmd,
     loadSessionCmd,

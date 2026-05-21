@@ -4,11 +4,16 @@
 
 | VS Code | Version | License |
 |---------|---------|--------|
-| >=1.85.0 | 0.2.1 | MIT |
+| >=1.85.0 | 0.2.2 | MIT |
 
 ---
 
-## What's New in v0.2.1
+## What's New in v0.2.2
+
+- 🐛 **Command Fix** - Registered missing `openChatEditor` command that was defined in package.json but not in extension.ts
+- 🖼️ **Icon Loading Fix** - Fixed sidebar welcome icon display by removing erroneous empty `src` assignment
+
+### Previous v0.2.1
 
 - 🖼️ **Fixed Icon Display** - Added `img-src vscode-resource:` to CSP policies for ChatPanel, ChatViewProvider, and HistoryPanel
 - 📐 **Sidebar Layout Refined** - Usage instructions moved to bottom fixed area (`flex-shrink-0`)
@@ -91,7 +96,7 @@ Mao's Thought Guidance is a VS Code extension that uses Mao's Selected Works cor
 
 ### 1. Install
 ```bash
-code --install-extension ChairmanMao-guide-life-0.2.1.vsix
+code --install-extension ChairmanMao-guide-life-0.2.2.vsix
 ```
 
 ### 2. Configure API
@@ -148,6 +153,10 @@ MIT
 ---
 
 ## Changelog
+
+### v0.2.2
+- Fixed missing `openChatEditor` command registration
+- Fixed sidebar welcome icon not displaying
 
 ### v0.2.1
 - Fixed icon display: added `img-src` CSP policies
